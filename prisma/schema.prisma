@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum BookCategory {
+  MATH
+  READING
+  WRITING
+  GRAMMAR
+  GENERAL
+}
+enum BookDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+
+
+model Book {
+  id          String        @id @default(nanoid())
+  name        String
+  description String?
+  img         String?
+  link        String
+  category    BookCategory?
+  
+  
+  difficulty  BookDifficulty @default(MEDIUM) 
+
+  order       Int           @default(0)
+  isPublished Boolean       @default(true)
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([category])
+  @@index([isPublished, order])
+  @@map("books")
+}
