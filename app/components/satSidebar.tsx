@@ -4,164 +4,135 @@ import Link from "next/link";
 import { ReactNode, useState } from "react";
 import { usePathname } from "next/navigation";
 
-const sidebarItems = [
-  {
-    label: "Overview",
-    href: "/sat",
-    icon: "overview",
-  },
-  {
-    label: "Study Resources",
-    href: "/sat/resources",
-    icon: "resources",
-  },
-  {
-    label: "Books",
-    href: "/sat/books",
-    icon: "books",
-  },
-  {
-    label: "Study Plan",
-    href: "/sat/study-plan",
-    icon: "plan",
-  },
-  {
-    label: "Practice",
-    href: "/sat/practice",
-    icon: "practice",
-  },
-  {
-    label: "Advice",
-    href: "/sat/advice",
-    icon: "advice",
-  },
+/* ------------------------------------------------------------------ */
+/*  SIDEBAR NAV                                                       */
+/* ------------------------------------------------------------------ */
+
+type IconName =
+  | "overview"
+  | "resources"
+  | "books"
+  | "plan"
+  | "practice"
+  | "advice";
+
+const sidebarItems: { label: string; href: string; icon: IconName }[] = [
+  { label: "Overview",        href: "/sat",            icon: "overview"  },
+  { label: "Study Resources", href: "/sat/resources",  icon: "resources" },
+  { label: "Books",           href: "/sat/books",      icon: "books"     },
+  { label: "Study Plan",      href: "/sat/study-plan", icon: "plan"      },
+  { label: "Practice",        href: "/sat/practice",   icon: "practice"  },
+  { label: "Advice",          href: "/sat/advice",     icon: "advice"    },
 ];
+
+/* ------------------------------------------------------------------ */
+/*  ICONS                                                             */
+/* ------------------------------------------------------------------ */
 
 const Icon = ({
   name,
-  className = "",
+  className = "h-4 w-4",
 }: {
-  name: string;
+  name: IconName;
   className?: string;
 }) => {
-  if (name === "overview") {
-    return (
-      <svg viewBox="0 0 24 24" fill="none" className={className}>
-        <path
-          d="M4 6h16M4 12h10M4 18h16"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        />
-      </svg>
-    );
-  }
+  const props = {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.6,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    className,
+  };
 
-  if (name === "resources") {
-    return (
-      <svg viewBox="0 0 24 24" fill="none" className={className}>
-        <path
-          d="M5 7h14M5 12h14M5 17h8"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        />
-        <path
-          d="M17 16l2 2 3-4"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    );
+  switch (name) {
+    case "overview":
+      return (
+        <svg {...props}>
+          <rect x="3" y="3" width="7" height="9" rx="1.5" />
+          <rect x="14" y="3" width="7" height="5" rx="1.5" />
+          <rect x="14" y="12" width="7" height="9" rx="1.5" />
+          <rect x="3" y="16" width="7" height="5" rx="1.5" />
+        </svg>
+      );
+    case "resources":
+      return (
+        <svg {...props}>
+          <path d="M4 6h16M4 12h10M4 18h16" />
+        </svg>
+      );
+    case "books":
+      return (
+        <svg {...props}>
+          <path d="M4 5a2 2 0 0 1 2-2h6v18H6a2 2 0 0 1-2-2V5Z" />
+          <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" />
+        </svg>
+      );
+    case "plan":
+      return (
+        <svg {...props}>
+          <rect x="3" y="5" width="18" height="16" rx="2" />
+          <path d="M3 10h18M8 3v4M16 3v4" />
+        </svg>
+      );
+    case "practice":
+      return (
+        <svg {...props}>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 7v5l3 2" />
+        </svg>
+      );
+    case "advice":
+      return (
+        <svg {...props}>
+          <path d="M21 12a8 8 0 0 1-11.7 7.1L4 20l1-4.4A8 8 0 1 1 21 12Z" />
+        </svg>
+      );
   }
-
-  if (name === "books") {
-    return (
-      <svg viewBox="0 0 24 24" fill="none" className={className}>
-        <path
-          d="M6 5h9a3 3 0 0 1 3 3v11H9a3 3 0 0 0-3 3V5Z"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M6 5a3 3 0 0 1 3-3h9v17"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinejoin="round"
-        />
-      </svg>
-    );
-  }
-
-  if (name === "plan") {
-    return (
-      <svg viewBox="0 0 24 24" fill="none" className={className}>
-        <path
-          d="M7 4v3M17 4v3M5 9h14M6 6h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        />
-      </svg>
-    );
-  }
-
-  if (name === "practice") {
-    return (
-      <svg viewBox="0 0 24 24" fill="none" className={className}>
-        <path
-          d="M12 21a9 9 0 1 0-9-9"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        />
-        <path
-          d="M12 7v5l3 3"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    );
-  }
-
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <path
-        d="M12 3l2.4 5.4 5.6.6-4.2 3.8 1.2 5.7L12 15.6 7 18.5l1.2-5.7L4 9l5.6-.6L12 3Z"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
 };
 
-const MenuIcon = ({ className = "" }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" className={className}>
+const BrandMark = ({ className = "h-[18px] w-[18px]" }: { className?: string }) => (
+  <svg viewBox="0 0 20 20" className={className} aria-hidden="true">
     <path
-      d="M5 7h14M5 12h14M5 17h14"
+      d="M10 1.5 L18.5 10 L10 18.5 L1.5 10 Z"
+      fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
+      strokeWidth="1.4"
     />
+    <path d="M10 6 L14 10 L10 14 L6 10 Z" fill="currentColor" />
   </svg>
 );
 
-const CloseIcon = ({ className = "" }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" className={className}>
-    <path
-      d="M7 7l10 10M17 7 7 17"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-    />
+const MenuIcon = ({ className = "h-5 w-5" }: { className?: string }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.8}
+    strokeLinecap="round"
+    className={className}
+  >
+    <path d="M5 7h14M5 12h14M5 17h14" />
   </svg>
 );
+
+const CloseIcon = ({ className = "h-5 w-5" }: { className?: string }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.8}
+    strokeLinecap="round"
+    className={className}
+  >
+    <path d="M7 7l10 10M17 7 7 17" />
+  </svg>
+);
+
+/* ------------------------------------------------------------------ */
+/*  SIDEBAR CONTENT                                                   */
+/* ------------------------------------------------------------------ */
 
 const SidebarContent = ({ close }: { close?: () => void }) => {
   const pathname = usePathname();
@@ -172,23 +143,31 @@ const SidebarContent = ({ close }: { close?: () => void }) => {
   };
 
   return (
-    <div className="flex h-full flex-col bg-white">
-      <div className="p-6">
-        <Link href="/sat" onClick={close} className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white">
-            <Icon name="overview" className="h-5 w-5" />
+    <div className="flex h-full flex-col bg-white/70 backdrop-blur-xl">
+      {/* Brand */}
+      <Link
+        href="/sat"
+        onClick={close}
+        className="mx-4 mt-5 flex items-center gap-2.5 border-b border-zinc-200 pb-4"
+      >
+        <span className="text-indigo-600">
+          <BrandMark />
+        </span>
+        <span className="flex flex-col leading-tight">
+          <span className="text-[14.5px] font-semibold tracking-[-0.012em] text-zinc-950">
+            Atlas
           </span>
+          <span className="text-[11.5px] text-zinc-500">SAT preparation</span>
+        </span>
+      </Link>
 
-          <div>
-            <p className="text-lg font-semibold tracking-[-0.04em] text-slate-950">
-              SAT Hub
-            </p>
-            <p className="text-sm text-slate-500">Study dashboard</p>
-          </div>
-        </Link>
+      {/* Section label */}
+      <div className="mt-5 px-6 pb-1 font-mono text-[10.5px] uppercase tracking-[0.1em] text-zinc-400">
+        Navigation
       </div>
 
-      <nav className="flex-1 space-y-1 px-3">
+      {/* Nav */}
+      <nav className="mt-1 flex flex-1 flex-col gap-0.5 px-3">
         {sidebarItems.map((item) => {
           const active = isActive(item.href);
 
@@ -198,76 +177,94 @@ const SidebarContent = ({ close }: { close?: () => void }) => {
               href={item.href}
               onClick={close}
               className={[
-                "group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-300",
+                "group relative flex items-center gap-2.5 rounded-[7px] px-2.5 py-2 text-[13.5px] transition-colors",
                 active
-                  ? "bg-slate-950 text-white shadow-lg shadow-sky-100"
-                  : "text-slate-600 hover:translate-x-1 hover:bg-slate-100 hover:text-slate-950",
+                  ? "bg-zinc-100 font-medium text-zinc-950"
+                  : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950",
               ].join(" ")}
             >
+              {active && (
+                <span className="absolute -left-3 top-1/2 h-[18px] w-[3px] -translate-y-1/2 rounded-r bg-indigo-600" />
+              )}
               <span
                 className={[
-                  "flex h-9 w-9 items-center justify-center rounded-xl transition",
-                  active
-                    ? "bg-white/10 text-sky-300"
-                    : "bg-slate-100 text-slate-500 group-hover:bg-white group-hover:text-sky-600",
+                  "flex h-6 w-6 items-center justify-center",
+                  active ? "text-indigo-600" : "text-zinc-400 group-hover:text-zinc-700",
                 ].join(" ")}
               >
-                <Icon name={item.icon} className="h-5 w-5" />
+                <Icon name={item.icon} />
               </span>
-
-              <span>{item.label}</span>
+              <span className="flex-1">{item.label}</span>
+              {active && <span className="h-1.5 w-1.5 rounded-full bg-indigo-600" />}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4">
-        <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-          <p className="text-sm font-semibold text-slate-950">Study rule</p>
-          <p className="mt-2 text-sm leading-6 text-slate-500">
-            Fix mistakes before increasing speed.
-          </p>
+      {/* Study principle */}
+      <div className="m-4 rounded-[10px] border border-zinc-200 bg-zinc-50 p-3.5">
+        <div className="mb-2 flex items-center gap-2 font-mono text-[10.5px] uppercase tracking-[0.1em] text-zinc-500">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          </span>
+          Study principle
         </div>
+        <p className="text-[13px] leading-relaxed text-zinc-900">
+          Fix mistakes before you try to increase speed.
+        </p>
       </div>
     </div>
   );
 };
 
-export default function SatSidebarLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+/* ------------------------------------------------------------------ */
+/*  LAYOUT                                                            */
+/* ------------------------------------------------------------------ */
+
+export default function SatSidebarLayout({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <main className="min-h-screen bg-[#f7f8fb] text-slate-950">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(to_right,rgba(15,23,42,0.055)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.055)_1px,transparent_1px)] bg-[size:42px_42px]" />
-      <div className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-96 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.22),transparent_34rem)]" />
+    <main className="min-h-screen bg-[#F7F7F8] text-zinc-950">
+      {/* Subtle background — grid + indigo wash */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(to_right,rgba(9,9,11,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(9,9,11,0.045)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_50%_0%,black_0%,transparent_60%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed -top-64 left-1/2 -z-10 h-[520px] w-[720px] -translate-x-[30%] rounded-full bg-[radial-gradient(circle,rgba(79,70,229,0.10),transparent_60%)] blur-2xl"
+      />
 
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/80 backdrop-blur-xl lg:hidden">
-        <div className="flex items-center justify-between px-5 py-4">
-          <div>
-            <p className="text-sm font-semibold text-slate-950">SAT Hub</p>
-            <p className="text-xs text-slate-500">Choose a page</p>
-          </div>
+      <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/80 backdrop-blur-xl lg:hidden">
+        <div className="flex items-center justify-between px-5 py-3.5">
+          <Link href="/sat" className="flex items-center gap-2.5">
+            <span className="text-indigo-600">
+              <BrandMark className="h-4 w-4" />
+            </span>
+            <span className="flex flex-col leading-tight">
+              <span className="text-sm font-semibold text-zinc-950">Atlas</span>
+              <span className="text-[11px] text-zinc-500">SAT preparation</span>
+            </span>
+          </Link>
 
           <button
             onClick={() => setOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-white transition active:scale-95"
+            className="flex h-9 w-9 items-center justify-center rounded-[8px] border border-zinc-200 bg-white text-zinc-700 transition active:scale-95"
             aria-label="Open sidebar"
           >
-            <MenuIcon className="h-5 w-5" />
+            <MenuIcon />
           </button>
         </div>
       </header>
 
-      {/* Mobile dark overlay */}
+      {/* Mobile overlay */}
       <div
         onClick={() => setOpen(false)}
         className={[
-          "fixed inset-0 z-50 bg-slate-950/30 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
+          "fixed inset-0 z-50 bg-zinc-950/30 backdrop-blur-sm transition-opacity duration-300 lg:hidden",
           open ? "opacity-100" : "pointer-events-none opacity-0",
         ].join(" ")}
       />
@@ -275,31 +272,28 @@ export default function SatSidebarLayout({
       {/* Mobile sliding sidebar */}
       <aside
         className={[
-          "fixed left-0 top-0 z-50 h-full w-[86%] max-w-sm border-r border-slate-200 bg-white shadow-2xl transition-transform duration-500 ease-out lg:hidden",
+          "fixed left-0 top-0 z-50 h-full w-[86%] max-w-sm border-r border-zinc-200 bg-white shadow-2xl transition-transform duration-300 ease-out lg:hidden",
           open ? "translate-x-0" : "-translate-x-full",
         ].join(" ")}
       >
         <button
           onClick={() => setOpen(false)}
-          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-700 transition hover:bg-slate-200 active:scale-95"
+          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-[8px] border border-zinc-200 bg-white text-zinc-700 transition hover:bg-zinc-50 active:scale-95"
           aria-label="Close sidebar"
         >
-          <CloseIcon className="h-5 w-5" />
+          <CloseIcon />
         </button>
-
         <SidebarContent close={() => setOpen(false)} />
       </aside>
 
       {/* Desktop layout */}
-<div className="grid lg:grid-cols-[300px_1fr]">
-  <aside className="sticky left-0 top-0 hidden h-screen border-r border-slate-200 bg-white/80 backdrop-blur-xl lg:block">
-    <SidebarContent />
-  </aside>
+      <div className="grid lg:grid-cols-[260px_1fr]">
+        <aside className="sticky left-0 top-0 hidden h-screen border-r border-zinc-200 lg:block">
+          <SidebarContent />
+        </aside>
 
-  <section className="px-5 py-10 sm:px-8 lg:px-10 lg:py-14">
-    {children}
-  </section>
-</div>
+        <section className="min-w-0">{children}</section>
+      </div>
     </main>
   );
 }
