@@ -1,993 +1,978 @@
-"use client"
-import React, { useEffect } from "react";
+"use client";
+
+import Link from "next/link";
+import SiteLogo from "./sitecomponents/logo";
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  EXAM DATA
+// DATA
 // ─────────────────────────────────────────────────────────────────────────────
-const tests = [
+
+const guides = [
   {
-    code: "SAT",
-    name: "Scholastic Aptitude Test",
-    domain: "Standardized Admissions",
-    metric: "Digital SAT · 400–1600",
+    exam: "SAT",
+    label: "College Admission",
+    title: "Digital SAT",
+    description:
+      "Learn the test format, choose useful resources, and build a realistic practice routine.",
+    start: "Take a diagnostic test first",
+    problem: "Many students practice randomly without knowing their weak areas.",
+    focus: ["Reading & Writing", "Math", "Practice Tests"],
     href: "/sat",
-    summary: "Section-by-section roadmap for the digital SAT, with score-targeted study plans.",
-    tags: ["Roadmap", "Score targets", "Practice"],
+    accent: "sat",
   },
   {
-    code: "IELTS",
-    name: "Academic Training",
-    domain: "English Proficiency",
-    metric: "Band Score · 0–9",
+    exam: "IELTS",
+    label: "Study Abroad",
+    title: "IELTS",
+    description:
+      "Prepare for Listening, Reading, Writing, and Speaking with a clear section-by-section guide.",
+    start: "Understand the band descriptors",
+    problem: "Students often study vocabulary but ignore task requirements.",
+    focus: ["Listening", "Writing", "Speaking"],
     href: "/ielts",
-    summary: "Skill-specific frameworks for Writing, Speaking, Reading and Listening, with band 7+ benchmarks.",
-    tags: ["Band 7+", "Writing", "Speaking"],
+    accent: "ielts",
   },
   {
-    code: "HSK",
-    name: "Mandarin Proficiency",
-    domain: "Chinese Language",
-    metric: "Level-Based · HSK 1–6",
+    exam: "HSK",
+    label: "Chinese Proficiency",
+    title: "HSK",
+    description:
+      "Build vocabulary, grammar, reading, and listening skills through a structured Chinese study path.",
+    start: "Check your current vocabulary level",
+    problem: "Students memorize words but do not review them in context.",
+    focus: ["Vocabulary", "Grammar", "Listening"],
     href: "/hsk",
-    summary: "Level-by-level vocabulary, grammar, and listening systems built around spaced repetition.",
-    tags: ["SRS", "HSK 1–6", "Listening"],
+    accent: "hsk",
+  },
+];
+
+const steps = [
+  {
+    number: "01",
+    title: "Pick your test",
+    text: "Choose the exam you are preparing for instead of jumping between random online advice.",
   },
   {
-    code: "CSCA",
-    name: "Strategy & Competitive Analysis",
-    domain: "Professional Certification",
-    metric: "Frameworks · Pass / Distinction",
-    href: "/csca",
-    summary: "Core frameworks, case practice and exam-day approach for the CSCA certification.",
-    tags: ["Frameworks", "Case practice", "Strategy"],
+    number: "02",
+    title: "Understand the structure",
+    text: "Read the overview first so you know what the exam actually tests and how it is scored.",
+  },
+  {
+    number: "03",
+    title: "Use the right resources",
+    text: "Start with selected resources, books, and practice methods instead of collecting everything.",
   },
 ];
 
-// How it works.
-const steps = [
-  { n: "01", t: "Diagnose", d: "Take a baseline test. Identify where you actually stand today." },
-  { n: "02", t: "Plan", d: "Translate your baseline into a focused weekly study schedule." },
-  { n: "03", t: "Practice", d: "Work targeted drills on your weakest two areas, not everything at once." },
-  { n: "04", t: "Sit", d: "Walk in prepared. The system has already done most of the work." },
-];
-
-// Credibility stats.
-const stats = [
-  { n: "100%", l: "Independently written" },
-  { n: "0", l: "Sponsored placements" },
+const values = [
+  {
+    title: "No login",
+    text: "The website is made to be opened quickly. Students can start reading without creating an account.",
+  },
+  {
+    title: "Real experience",
+    text: "The guides are based on actual preparation and test-taking experience, not copied generic advice.",
+  },
+  {
+    title: "Beginner-friendly",
+    text: "The content is written for students who feel lost and need a clear first step.",
+  },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  COMPONENT
+// ICONS
 // ─────────────────────────────────────────────────────────────────────────────
-export default function Homepage() {
-  useEffect(() => {
-    if (document.getElementById("atlas-fonts")) return;
-    const pre1 = Object.assign(document.createElement("link"), {
-      rel: "preconnect", href: "https://fonts.googleapis.com",
-    });
-    const pre2 = Object.assign(document.createElement("link"), {
-      rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "",
-    });
-    const link = Object.assign(document.createElement("link"), {
-      id: "atlas-fonts",
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Geist:wght@300;400;450;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap",
-    });
-    document.head.append(pre1, pre2, link);
-  }, []);
 
+function ArrowRight() {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      width="14"
+      height="14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M5 10h10M11 6l4 4-4 4" />
+    </svg>
+  );
+}
+
+function ArrowUpRight() {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      width="14"
+      height="14"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M6 14 14 6M8 6h6v6" />
+    </svg>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PAGE
+// ─────────────────────────────────────────────────────────────────────────────
+
+export default function HomePage() {
   return (
     <div className="root">
       <style>{css}</style>
 
-      {/* ───────────── NAV ───────────── */}
-      <header className="nav">
-        <div className="nav-inner">
-          <a href="#top" className="brand" aria-label="Atlas">
-            <span className="brand-mark" aria-hidden="true">
-              <svg viewBox="0 0 20 20" width="18" height="18">
-                <path d="M10 1.5 L18.5 10 L10 18.5 L1.5 10 Z" fill="none" stroke="currentColor" strokeWidth="1.4" />
-                <path d="M10 6 L14 10 L10 14 L6 10 Z" fill="currentColor" />
-              </svg>
-            </span>
-            <span className="brand-word">Atlas</span>
-          </a>
+      <div className="bg-noise" />
 
-          <nav className="nav-links" aria-label="Primary">
-            <a href="#exams">Exams</a>
-            <a href="#method">Method</a>
-            <a href="#about">About</a>
-          </nav>
+      <header className="topbar">
+        <SiteLogo />
 
-          <div className="nav-actions">
-            <a href="#exams" className="btn-primary">
-              Browse exams
-              <span className="arr">→</span>
-            </a>
-          </div>
-        </div>
+        <nav className="nav">
+          <a href="#guides">Guides</a>
+          <a href="#start">Start</a>
+          <a href="#about">About</a>
+        </nav>
       </header>
 
-      {/* ───────────── HERO ───────────── */}
-      <section className="hero" id="top">
-        <div className="hero-bg" aria-hidden="true">
-          <div className="dot-grid" />
-          <div className="hero-orb" />
-        </div>
+      <main className="main">
+        {/* HERO */}
+        <section className="hero">
+          <div className="hero-left">
+            <div className="eyebrow">TEST PREP GUIDES</div>
 
-        <div className="hero-inner">
-          <a href="#exams" className="hero-badge">
-            <span className="pulse" />
-            <span>Now covering SAT · IELTS · HSK · CSCA</span>
-            <span className="arr">→</span>
-          </a>
+            <h1>
+              Start test prep
+              <br />
+              without feeling lost.
+            </h1>
 
-          <h1 className="hero-title">
-            The preparation system<br />
-            <span className="hero-title-accent">for the exams that matter.</span>
-          </h1>
-
-          <p className="hero-sub">
-            Roadmaps, resources and study systems for the SAT, IELTS, HSK and CSCA — built by a student who took all four.
-          </p>
-
-          <div className="hero-ctas">
-            <a href="#exams" className="btn-primary lg">
-              Browse exams
-              <span className="arr">→</span>
-            </a>
-            <a href="#method" className="btn-ghost lg">How it works</a>
-          </div>
-
-          <div className="hero-trust-wrapper">
-            <span className="hero-trust-label">Author results</span>
-            <ul className="hero-trust" aria-label="Author results">
-              <li><span className="mono">SAT</span> <span className="score">1520</span></li>
-              <li><span className="mono">IELTS</span> <span className="score">Band 7.5</span></li>
-              <li><span className="mono">HSK</span> <span className="score">Level 5</span></li>
-              <li><span className="mono">CSCA</span> <span className="score">Distinction</span></li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ───────────── EXAMS ───────────── */}
-      <section className="section exams" id="exams">
-        <div className="section-head">
-          <span className="eyebrow">Exams</span>
-          <h2 className="section-title">Four guides. One system.</h2>
-          <p className="section-sub">
-            Each exam has its own dedicated guide — same structure, same depth, same standard.
-          </p>
-        </div>
-
-        <div className="exam-grid">
-          {tests.map((t) => (
-            <a key={t.code} href={t.href} className="exam-card" aria-label={`${t.code} — ${t.name}`}>
-              <div className="exam-card-inner">
-                <div className="exam-card-header">
-                  <div className="exam-code-wrap">
-                    <span className="exam-code">{t.code}</span>
-                    <svg className="exam-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M7 17L17 7M17 7H7M17 7V17" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                  <span className="exam-metric">{t.metric}</span>
-                </div>
-
-                <div className="exam-card-body">
-                  <h3 className="exam-card-title">{t.name}</h3>
-                  <p className="exam-card-domain">{t.domain}</p>
-                  <p className="exam-card-summary">{t.summary}</p>
-                </div>
-
-                <div className="exam-card-footer">
-                  <ul className="exam-tags" aria-label="Focus areas">
-                    {t.tags.map((tag) => (
-                      <li key={tag}>{tag}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      {/* ───────────── METHOD ───────────── */}
-      <section className="section method-section" id="method">
-        <div className="section-head">
-          <span className="eyebrow">Method</span>
-          <h2 className="section-title">How preparation actually works.</h2>
-          <p className="section-sub">
-            The same four-step system applies to every exam on the platform.
-          </p>
-        </div>
-
-        <ol className="steps" role="list">
-          {steps.map((s, i) => (
-            <li key={s.n} className="step">
-              <div className="step-indicator">
-                <span className="step-n">{s.n}</span>
-                {i < steps.length - 1 && <div className="step-line" />}
-              </div>
-              <div className="step-content">
-                <h3 className="step-t">{s.t}</h3>
-                <p className="step-d">{s.d}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {/* ───────────── STATS ───────────── */}
-      <section className="section stats-section" id="about">
-        <div className="stats-grid">
-          {stats.map((s) => (
-            <div key={s.l} className="stat">
-              <span className="stat-n">{s.n}</span>
-              <span className="stat-l">{s.l}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ───────────── PROOF / ABOUT ───────────── */}
-      <section className="section proof-section">
-        <div className="proof-grid">
-          <div className="proof-left">
-            <span className="eyebrow">About</span>
-            <h2 className="section-title">
-              Built by one student.<br />
-              Written without sponsors.
-            </h2>
-          </div>
-          <div className="proof-right">
-            <p>
-              Atlas is independently authored by a student who personally sat for every exam on the platform. There is no editorial team, no paid placements, and no affiliate content.
+            <p className="hero-text">
+              A simple website for students preparing for SAT, IELTS, and HSK.
+              Pick your test, read the guide, and find out what to do first.
             </p>
-            <p>
-              If a resource is recommended here, it was used in real preparation. If a timeline is listed, it was followed. The goal is to make standardized-exam prep less overwhelming and more transparent for the next student in line.
-            </p>
-            <a href="#" className="link-arrow">
-              Read the full about page
-              <span className="arr">→</span>
-            </a>
-          </div>
-        </div>
-      </section>
 
-      {/* ───────────── CTA ───────────── */}
-      <section className="cta-section">
-        <div className="cta-inner">
-          <h2 className="cta-title">Start with the exam closest to you.</h2>
-          <p className="cta-sub">Open a guide. Read the roadmap. Begin this week.</p>
-          <div className="cta-row">
-            {tests.map((t) => (
-              <a key={t.code} href={t.href} className="cta-chip">
-                {t.code}
-                <span className="arr">→</span>
+            <div className="hero-actions">
+              <a href="#guides" className="btn-primary">
+                Choose a guide
+                <ArrowRight />
               </a>
+
+              <a href="#start" className="btn-secondary">
+                See how it works
+              </a>
+            </div>
+          </div>
+
+          <div className="hero-card">
+            <div className="hero-card-top">
+              <span>For students who ask</span>
+              <span className="small-label">Start here</span>
+            </div>
+
+            <div className="question-stack">
+              <div className="question-item">Where should I start?</div>
+              <div className="question-item">Which resources are useful?</div>
+              <div className="question-item">How should I study each week?</div>
+              <div className="question-item">What mistakes should I avoid?</div>
+            </div>
+
+            <div className="note-box">
+              This website is designed to reduce confusion, not add more
+              information overload.
+            </div>
+          </div>
+        </section>
+
+        {/* GUIDES */}
+        <section id="guides" className="section">
+          <div className="section-header split">
+            <div>
+              <div className="section-eyebrow">THREE GUIDES</div>
+              <h2>Choose your test</h2>
+            </div>
+
+            <p>
+              Each guide gives students a practical overview, recommended
+              resources, book suggestions, and a clear way to begin.
+            </p>
+          </div>
+
+          <div className="guide-grid">
+            {guides.map((guide) => (
+              <Link
+                key={guide.exam}
+                href={guide.href}
+                className={`guide-card ${guide.accent}`}
+              >
+                <div className="guide-top">
+                  <div>
+                    <div className="exam-name">{guide.exam}</div>
+                    <div className="exam-label">{guide.label}</div>
+                  </div>
+
+                  <div className="guide-icon">
+                    <ArrowUpRight />
+                  </div>
+                </div>
+
+                <div className="guide-main">
+                  <h3>{guide.title} Guide</h3>
+                  <p>{guide.description}</p>
+                </div>
+
+                <div className="guide-info">
+                  <div className="info-block">
+                    <span>Start here</span>
+                    <strong>{guide.start}</strong>
+                  </div>
+
+                  <div className="info-block">
+                    <span>Common problem</span>
+                    <strong>{guide.problem}</strong>
+                  </div>
+                </div>
+
+                <div className="tag-row">
+                  {guide.focus.map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
+                </div>
+
+                <div className="guide-footer">
+                  <span>Open guide</span>
+                  <ArrowRight />
+                </div>
+              </Link>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ───────────── FOOTER ───────────── */}
-      <footer className="footer">
-        <div className="footer-inner">
-          <div className="footer-grid">
-            <div className="footer-brand">
-              <div className="brand">
-                <span className="brand-mark" aria-hidden="true">
-                  <svg viewBox="0 0 20 20" width="16" height="16">
-                    <path d="M10 1.5 L18.5 10 L10 18.5 L1.5 10 Z" fill="none" stroke="currentColor" strokeWidth="1.4" />
-                    <path d="M10 6 L14 10 L10 14 L6 10 Z" fill="currentColor" />
-                  </svg>
-                </span>
-                <span className="brand-word">Atlas</span>
+        {/* START */}
+        <section id="start" className="section start-section">
+          <div className="section-header">
+            <div className="section-eyebrow">HOW TO USE THIS WEBSITE</div>
+            <h2>Three simple steps</h2>
+          </div>
+
+          <div className="steps">
+            {steps.map((step) => (
+              <div key={step.number} className="step-card">
+                <div className="step-number">{step.number}</div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
               </div>
-              <p className="footer-tag">
-                A student-led preparation platform for the SAT, IELTS, HSK and CSCA.
-              </p>
-            </div>
+            ))}
+          </div>
+        </section>
 
-            <div>
-              <h4>Exams</h4>
-              <ul>
-                {tests.map((t) => (
-                  <li key={t.code}>
-                    <a href={t.href}><span className="mono">{t.code}</span>&nbsp;&nbsp;{t.name}</a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h4>Platform</h4>
-              <ul>
-                <li><a href="#method">Method</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#">Changelog</a></li>
-              </ul>
-            </div>
+        {/* ABOUT */}
+        <section id="about" className="section about-section">
+          <div className="about-left">
+            <div className="section-eyebrow">WHY THIS WEBSITE</div>
+            <h2>Most students do not need more links. They need direction.</h2>
           </div>
 
-          <div className="footer-bottom">
-            <span>© 2026 Atlas</span>
-            <span>Built independently. No sponsors.</span>
+          <div className="about-right">
+            <p>
+              When preparing for exams, many students waste time searching for
+              resources, watching random videos, or switching between too many
+              study methods. This website helps students begin with a clear
+              overview and then move into resources, books, plans, and practice.
+            </p>
+
+            <div className="value-grid">
+              {values.map((item) => (
+                <div key={item.title} className="value-card">
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </footer>
+        </section>
+
+        {/* FOOTER */}
+        <footer className="footer">
+          <div>
+            <strong>LGITU</strong>
+            <p>
+              Let&apos;s Go Into Top Universities — simple test prep guides for
+              ambitious students.
+            </p>
+          </div>
+
+          <div className="footer-links">
+            <Link href="/sat">SAT</Link>
+            <Link href="/ielts">IELTS</Link>
+            <Link href="/hsk">HSK</Link>
+          </div>
+        </footer>
+      </main>
     </div>
   );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  STYLES
+// STYLES
 // ─────────────────────────────────────────────────────────────────────────────
+
 const css = `
-  :root {
-    --bg:           #FFFFFF;
-    --bg-2:         #FAFAFA;
-    --bg-3:         #F4F4F5;
-    --border:       #E4E4E7;
-    --border-2:     #D4D4D8;
-    --ink:          #09090B;
-    --ink-2:        #3F3F46;
-    --ink-3:        #71717A;
-    --ink-4:        #A1A1AA;
-    --accent:       #18181B;
-    --accent-soft:  #F4F4F5;
-    --green:        #10B981;
+:root {
+  --bg: #F6F3ED;
+  --paper: #FFFDF8;
+  --text: #171717;
+  --muted: #6F6A60;
+  --muted-2: #9B9589;
+  --border: #E2DCCF;
+  --dark: #171717;
 
-    --f-sans:  'Geist', ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-    --f-mono:  'Geist Mono', ui-monospace, "SF Mono", Menlo, monospace;
+  --sat: #4F46E5;
+  --ielts: #0E7490;
+  --hsk: #C2410C;
+}
 
-    --r-sm: 6px;
-    --r-md: 10px;
-    --r-lg: 14px;
-    --r-xl: 20px;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  .root {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--f-sans);
-    font-size: 15px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    font-feature-settings: "ss01", "cv11";
-  }
-  .root *, .root *::before, .root *::after { box-sizing: border-box; }
-  .root a { color: inherit; text-decoration: none; }
-  .root h1, .root h2, .root h3, .root h4 { margin: 0; font-weight: 600; letter-spacing: -0.022em; }
-  .mono { font-family: var(--f-mono); font-feature-settings: "tnum"; }
+html {
+  scroll-behavior: smooth;
+}
 
-  .arr {
-    display: inline-block;
-    transition: transform .22s cubic-bezier(.2,.7,.2,1);
-  }
+body {
+  margin: 0;
+}
 
-  /* ───────── NAV ───────── */
-  .nav {
-    position: sticky; top: 0; z-index: 50;
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: saturate(180%) blur(12px);
-    -webkit-backdrop-filter: saturate(180%) blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-inner {
-    max-width: 1200px; margin: 0 auto;
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-  }
-  .brand {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-weight: 600;
-    font-size: 15px;
-    letter-spacing: -0.015em;
-  }
-  .brand-mark {
-    display: inline-flex; align-items: center; justify-content: center;
-    color: var(--ink);
-  }
-  .brand-word { color: var(--ink); }
+.root {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
 
-  .nav-links {
-    display: flex; gap: 24px;
-  }
-  .nav-links a {
-    font-size: 13.5px;
-    color: var(--ink-2);
-    font-weight: 450;
-    transition: color .18s ease;
-  }
-  .nav-links a:hover { color: var(--ink); }
+.bg-noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(23, 23, 23, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(23, 23, 23, 0.035) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 75%);
+}
 
-  .nav-actions { display: flex; align-items: center; gap: 12px; }
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 66px;
+  padding: 0 32px;
+  border-bottom: 1px solid rgba(226, 220, 207, 0.9);
+  background: rgba(246, 243, 237, 0.82);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .btn-primary {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: #09090B !important;
-    color: #ffffff !important;
-    padding: 8px 14px;
-    border-radius: 999px;
-    font-size: 13.5px;
-    font-weight: 500;
-    letter-spacing: -0.005em;
-    border: 1px solid #09090B;
-    transition: background .18s ease, transform .18s ease;
-  }
-  .btn-primary:hover { background: #27272a !important; }
-  .btn-primary:hover .arr { transform: translateX(3px); }
-  .btn-primary.lg { padding: 12px 20px; font-size: 14.5px; }
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
 
-  .btn-ghost {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: transparent;
-    color: var(--ink);
-    padding: 8px 14px;
-    border-radius: 999px;
-    font-size: 13.5px;
-    font-weight: 500;
-    border: 1px solid var(--border-2);
-    transition: background .18s ease, border-color .18s ease;
-  }
-  .btn-ghost:hover { background: var(--bg-3); border-color: var(--ink-4); }
-  .btn-ghost.lg { padding: 12px 20px; font-size: 14.5px; }
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 550;
+  transition: color .18s ease;
+}
 
-  /* ───────── HERO ───────── */
+.nav a:hover {
+  color: var(--text);
+}
+
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 54px 24px 34px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) 430px;
+  gap: 36px;
+  align-items: center;
+  padding: 28px 0 54px;
+}
+
+.eyebrow,
+.section-eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero h1 {
+  margin: 18px 0 0;
+  max-width: 780px;
+  font-size: clamp(46px, 6vw, 82px);
+  line-height: 0.94;
+  letter-spacing: -0.075em;
+  font-weight: 860;
+}
+
+.hero-text {
+  margin: 22px 0 0;
+  max-width: 650px;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.hero-actions {
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-primary,
+.btn-secondary {
+  height: 46px;
+  padding: 0 18px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 750;
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    background .18s ease;
+}
+
+.btn-primary {
+  background: var(--dark);
+  color: white;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: rgba(255, 253, 248, 0.76);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: rgba(23, 23, 23, 0.3);
+}
+
+.hero-card {
+  padding: 24px;
+  border-radius: 28px;
+  background: rgba(255, 253, 248, 0.82);
+  border: 1px solid var(--border);
+  box-shadow: 0 22px 60px rgba(23, 23, 23, 0.06);
+}
+
+.hero-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.small-label {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #F1ECE2;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 12px;
+}
+
+.question-stack {
+  margin-top: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.question-item {
+  padding: 14px 15px;
+  border-radius: 16px;
+  background: white;
+  border: 1px solid rgba(226, 220, 207, 0.9);
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.note-box {
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 18px;
+  background: var(--dark);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.section {
+  padding: 44px 0;
+}
+
+.section-header {
+  margin-bottom: 20px;
+}
+
+.section-header.split {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.section-header h2,
+.about-left h2 {
+  margin: 9px 0 0;
+  font-size: clamp(30px, 3.2vw, 44px);
+  line-height: 1.04;
+  letter-spacing: -0.06em;
+}
+
+.section-header p {
+  max-width: 470px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.guide-card {
+  --accent: #171717;
+
+  min-height: 430px;
+  padding: 22px;
+  border-radius: 26px;
+  background: rgba(255, 253, 248, 0.86);
+  border: 1px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 42px rgba(23, 23, 23, 0.045);
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease;
+}
+
+.guide-card::before {
+  content: "";
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: 0;
+  height: 5px;
+  border-radius: 0 0 999px 999px;
+  background: var(--accent);
+}
+
+.guide-card.sat {
+  --accent: var(--sat);
+}
+
+.guide-card.ielts {
+  --accent: var(--ielts);
+}
+
+.guide-card.hsk {
+  --accent: var(--hsk);
+}
+
+.guide-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(23, 23, 23, 0.25);
+  box-shadow: 0 26px 70px rgba(23, 23, 23, 0.09);
+}
+
+.guide-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.exam-name {
+  font-size: 44px;
+  line-height: 0.95;
+  font-weight: 880;
+  letter-spacing: -0.08em;
+}
+
+.exam-label {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.guide-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform .2s ease,
+    color .2s ease,
+    border-color .2s ease;
+}
+
+.guide-card:hover .guide-icon {
+  transform: translate(3px, -3px);
+  color: var(--text);
+  border-color: rgba(23, 23, 23, 0.26);
+}
+
+.guide-main {
+  margin-top: 32px;
+}
+
+.guide-main h3 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+}
+
+.guide-main p {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.guide-info {
+  margin-top: 20px;
+  display: grid;
+  gap: 10px;
+}
+
+.info-block {
+  padding: 13px;
+  border-radius: 16px;
+  background: #F8F4EC;
+  border: 1px solid rgba(226, 220, 207, 0.88);
+}
+
+.info-block span {
+  display: block;
+  color: var(--muted-2);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.info-block strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 16px;
+}
+
+.tag-row span {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.guide-footer {
+  margin-top: auto;
+  padding-top: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.guide-footer svg {
+  transition: transform .18s ease;
+}
+
+.guide-card:hover .guide-footer svg {
+  transform: translateX(4px);
+}
+
+.start-section {
+  border-top: 1px solid rgba(226, 220, 207, 0.82);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.step-card {
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255, 253, 248, 0.82);
+  border: 1px solid var(--border);
+}
+
+.step-number {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.step-card h3 {
+  margin: 18px 0 0;
+  font-size: 21px;
+  letter-spacing: -0.045em;
+}
+
+.step-card p {
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.about-section {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 32px;
+  padding: 34px;
+  border-radius: 32px;
+  background: var(--dark);
+  color: white;
+}
+
+.about-section .section-eyebrow {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.about-left h2 {
+  color: white;
+}
+
+.about-right > p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.value-grid {
+  margin-top: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.value-card {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.value-card h3 {
+  margin: 0;
+  color: white;
+  font-size: 17px;
+  letter-spacing: -0.035em;
+}
+
+.value-card p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.footer {
+  margin-top: 42px;
+  padding: 28px 0 10px;
+  border-top: 1px solid rgba(226, 220, 207, 0.88);
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  color: var(--muted);
+}
+
+.footer strong {
+  color: var(--text);
+}
+
+.footer p {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.footer-links a:hover {
+  color: var(--text);
+}
+
+@media (max-width: 1120px) {
   .hero {
-    position: relative;
-    padding: 60px 20px 80px;
-    overflow: hidden;
-    border-bottom: 1px solid var(--border);
-  }
-  .hero-bg {
-    position: absolute; inset: 0;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .dot-grid {
-    position: absolute; inset: 0;
-    background-image: radial-gradient(circle, rgba(9,9,11,0.07) 1px, transparent 1px);
-    background-size: 22px 22px;
-    mask-image: radial-gradient(ellipse at 50% 35%, black 0%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse at 50% 35%, black 0%, transparent 75%);
-  }
-  .hero-orb {
-    position: absolute;
-    width: 600px; height: 600px;
-    left: 50%; top: -180px;
-    transform: translateX(-50%);
-    background: radial-gradient(circle at center, rgba(24,24,27,0.06), transparent 60%);
-    filter: blur(20px);
-  }
-  .hero-inner {
-    position: relative;
-    z-index: 1;
-    max-width: 800px; margin: 0 auto;
-    text-align: center;
-  }
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 6px 12px 6px 10px;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    font-size: 12px;
-    color: var(--ink-2);
-    font-weight: 450;
-    margin-bottom: 28px;
-    transition: border-color .2s ease, transform .2s ease;
-  }
-  .hero-badge:hover { border-color: var(--border-2); }
-  .hero-badge:hover .arr { transform: translateX(3px); }
-  .pulse {
-    width: 6px; height: 6px;
-    border-radius: 999px;
-    background: var(--green);
-    box-shadow: 0 0 0 0 rgba(16,185,129,0.5);
-    animation: pulse 2.2s infinite;
-  }
-  @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
-    70%  { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
-    100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    grid-template-columns: 1fr;
   }
 
-  .hero-title {
-    font-size: clamp(32px, 6vw, 56px);
-    line-height: 1.05;
-    letter-spacing: -0.035em;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 18px;
-    text-wrap: balance;
-  }
-  .hero-title-accent {
-    color: var(--ink-3);
-  }
-  .hero-sub {
-    font-size: clamp(15px, 1.4vw, 17px);
-    line-height: 1.6;
-    color: var(--ink-2);
-    max-width: 52ch;
-    margin: 0 auto 28px;
-    font-weight: 400;
-    text-wrap: balance;
-  }
-  .hero-ctas {
-    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-    margin-bottom: 40px;
+  .hero-card {
+    max-width: 720px;
   }
 
-  .hero-trust-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+  .guide-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
-  .hero-trust-label {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--ink-4);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-  .hero-trust {
-    display: flex; align-items: center; gap: 6px;
-    padding: 0;
-    list-style: none;
-    margin: 0;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .hero-trust li {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 12px;
-    color: var(--ink-2);
-    background: #fff;
-    border: 1px solid var(--border);
-    padding: 6px 12px;
-    border-radius: 999px;
-  }
-  .hero-trust li .mono {
-    font-size: 10px;
-    color: var(--ink-4);
-    letter-spacing: 0.04em;
-  }
-  .hero-trust li .score { color: var(--ink); font-weight: 600; }
 
-  /* ───────── SECTIONS ───────── */
+  .about-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    padding: 0 18px;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .main {
+    padding: 32px 16px 30px;
+  }
+
+  .hero {
+    padding: 18px 0 40px;
+    gap: 26px;
+  }
+
+  .hero h1 {
+    font-size: 44px;
+  }
+
+  .hero-text {
+    font-size: 15px;
+  }
+
   .section {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 80px 20px;
-  }
-  .section-head {
-    max-width: 600px;
-    margin-bottom: 40px;
-  }
-  .eyebrow {
-    display: inline-block;
-    font-family: var(--f-mono);
-    font-size: 11px;
-    color: var(--ink-3);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 14px;
-    font-weight: 500;
-  }
-  .section-title {
-    font-size: clamp(26px, 3.4vw, 38px);
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 12px;
-    text-wrap: balance;
-  }
-  .section-sub {
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--ink-2);
-    max-width: 50ch;
+    padding: 34px 0;
   }
 
-  /* ───────── EXAM GRID - TECH STYLE ───────── */
-  .exam-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-  .exam-card {
-    position: relative;
-    display: flex;
+  .section-header.split {
+    align-items: flex-start;
     flex-direction: column;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    overflow: hidden;
-    transition: border-color .2s ease, box-shadow .2s ease;
-  }
-  .exam-card:hover { 
-    border-color: var(--ink-4);
-    box-shadow: 0 4px 24px -8px rgba(0,0,0,0.08);
-  }
-  .exam-card-inner {
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    flex: 1;
-  }
-  .exam-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     gap: 12px;
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .exam-code-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .exam-code {
-    font-family: var(--f-mono);
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    color: var(--ink);
-  }
-  .exam-icon {
-    width: 16px;
-    height: 16px;
-    color: var(--ink-4);
-    transition: transform .2s ease, color .2s ease;
-  }
-  .exam-card:hover .exam-icon {
-    transform: translate(2px, -2px);
-    color: var(--ink);
-  }
-  .exam-metric {
-    font-family: var(--f-mono);
-    font-size: 11px;
-    color: var(--ink-4);
-    letter-spacing: 0.02em;
-  }
-  .exam-card-body { flex: 1; margin-bottom: 20px; }
-  .exam-card-title {
-    font-size: 18px;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 4px;
-  }
-  .exam-card-domain {
-    font-size: 12px;
-    color: var(--ink-3);
-    margin: 0 0 12px;
-    font-weight: 450;
-  }
-  .exam-card-summary {
-    font-size: 13.5px;
-    line-height: 1.6;
-    color: var(--ink-2);
-    margin: 0;
-  }
-  .exam-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  .exam-tags {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex; flex-wrap: wrap; gap: 6px;
-  }
-  .exam-tags li {
-    font-size: 11px;
-    color: var(--ink-3);
-    background: var(--bg-2);
-    padding: 4px 10px;
-    border-radius: 4px;
-    letter-spacing: 0.01em;
-    font-weight: 450;
   }
 
-  /* ───────── METHOD STEPS ───────── */
-  .method-section {
-    background: var(--bg-2);
-    max-width: none;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .method-section .section-head,
-  .method-section .steps {
-    max-width: 1200px; margin-left: auto; margin-right: auto;
-  }
+  .guide-grid,
   .steps {
-    list-style: none; padding: 0; margin: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-  }
-  .step {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: var(--r-md);
-    padding: 20px;
-    transition: border-color .2s ease, transform .2s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .step:hover { border-color: var(--border-2); transform: translateY(-1px); }
-  .step-indicator {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .step-n {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    font-family: var(--f-mono);
-    font-size: 11px;
-    color: var(--ink);
-    background: var(--bg-3);
-    border-radius: 50%;
-    letter-spacing: 0.02em;
-    font-weight: 600;
-  }
-  .step-line {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, var(--border-2), transparent);
-  }
-  .step-content { flex: 1; }
-  .step-t {
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: -0.015em;
-    margin-bottom: 6px;
-    color: var(--ink);
-  }
-  .step-d {
-    font-size: 13px;
-    line-height: 1.55;
-    color: var(--ink-2);
-    margin: 0;
+    grid-template-columns: 1fr;
   }
 
-  /* ───────── STATS ───────── */
-  .stats-section {
-    padding-top: 24px;
-    padding-bottom: 24px;
-  }
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-  .stat {
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: var(--r-md);
-    padding: 20px;
-    display: flex; flex-direction: column; gap: 4px;
-    text-align: center;
-  }
-  .stat-n {
-    font-size: 28px;
-    line-height: 1;
-    font-weight: 600;
-    letter-spacing: -0.03em;
-    color: var(--ink);
-    font-feature-settings: "tnum", "ss01";
-  }
-  .stat-l {
-    font-size: 12px;
-    color: var(--ink-3);
+  .guide-card {
+    min-height: auto;
   }
 
-  /* ───────── PROOF ───────── */
-  .proof-section { padding-top: 60px; padding-bottom: 60px; }
-  .proof-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: start;
+  .about-section {
+    padding: 24px;
+    border-radius: 26px;
   }
-  .proof-right p {
-    font-size: 14px;
-    line-height: 1.7;
-    color: var(--ink-2);
-    margin: 0 0 14px;
-    max-width: 48ch;
-  }
-  .link-arrow {
-    display: inline-flex; align-items: center; gap: 6px;
-    margin-top: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink);
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 2px;
-    transition: color .2s ease, border-color .2s ease;
-  }
-  .link-arrow:hover { color: var(--ink-3); border-color: var(--ink-3); }
-  .link-arrow:hover .arr { transform: translateX(3px); }
 
-  /* ───────── CTA ───────── */
-  .cta-section {
-    background: var(--ink);
-    color: #fff;
-    padding: 64px 20px;
-    border-top: 1px solid var(--ink);
-  }
-  .cta-inner {
-    max-width: 600px; margin: 0 auto;
-    text-align: center;
-  }
-  .cta-title {
-    font-size: clamp(24px, 3.4vw, 34px);
-    line-height: 1.15;
-    letter-spacing: -0.028em;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #fff;
-    text-wrap: balance;
-  }
-  .cta-sub {
-    font-size: 15px;
-    color: rgba(255,255,255,0.65);
-    margin: 0 auto 24px;
-    max-width: 40ch;
-  }
-  .cta-row {
-    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
-  }
-  .cta-chip {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 16px;
-    border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 500;
-    font-family: var(--f-mono);
-    color: #fff;
-    transition: background .2s ease, border-color .2s ease;
-  }
-  .cta-chip:hover {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.4);
-  }
-  .cta-chip:hover .arr { transform: translateX(3px); }
-
-  /* ───────── FOOTER ───────── */
   .footer {
-    background: var(--bg);
-    border-top: 1px solid var(--border);
-    padding: 48px 20px 28px;
+    flex-direction: column;
   }
-  .footer-inner { max-width: 1200px; margin: 0 auto; }
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr;
-    gap: 48px;
-    padding-bottom: 32px;
-    border-bottom: 1px solid var(--border);
-  }
-  .footer-tag {
-    font-size: 13px;
-    color: var(--ink-3);
-    line-height: 1.55;
-    margin-top: 12px;
-    max-width: 28ch;
-  }
-  .footer h4 {
-    font-family: var(--f-mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--ink-3);
-    margin-bottom: 14px;
-    font-weight: 500;
-  }
-  .footer ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-  .footer ul a {
-    font-size: 13px;
-    color: var(--ink-2);
-    transition: color .18s ease;
-  }
-  .footer ul a:hover { color: var(--ink); }
-  .footer ul .mono { color: var(--ink-4); font-size: 11px; }
+}
 
-  .footer-bottom {
-    display: flex; justify-content: space-between; align-items: center;
-    padding-top: 18px;
-    font-size: 12px;
-    color: var(--ink-3);
+@media (max-width: 430px) {
+  .hero h1 {
+    font-size: 38px;
   }
 
-  /* ───────── RESPONSIVE ───────── */
-  @media (max-width: 960px) {
-    .nav-inner { gap: 12px; }
-    .nav-links { display: none; }
-    .hero { padding: 48px 16px 64px; }
-    .section { padding: 60px 16px; }
-    .exam-grid { grid-template-columns: 1fr; gap: 12px; }
-    .steps { grid-template-columns: repeat(2, 1fr); }
-    .stats-grid { max-width: 100%; }
-    .proof-grid { grid-template-columns: 1fr; gap: 24px; }
-    .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
-    .footer-bottom { flex-direction: column; gap: 6px; align-items: flex-start; }
+  .exam-name {
+    font-size: 38px;
   }
-  
-  @media (max-width: 640px) {
-    .nav-inner { padding: 10px 16px; }
-    .btn-primary { padding: 8px 12px; font-size: 13px; }
-    .btn-primary.lg { padding: 10px 16px; font-size: 13.5px; }
-    .btn-ghost.lg { padding: 10px 16px; font-size: 13.5px; }
-    
-    .hero { padding: 40px 16px 56px; }
-    .hero-badge { font-size: 11px; padding: 5px 10px; margin-bottom: 20px; }
-    .hero-title { font-size: 28px; margin-bottom: 14px; }
-    .hero-sub { font-size: 14px; margin-bottom: 20px; }
-    .hero-ctas { margin-bottom: 32px; }
-    .hero-trust { gap: 6px; }
-    .hero-trust li { padding: 5px 10px; font-size: 11px; }
-    
-    .section { padding: 48px 16px; }
-    .section-head { margin-bottom: 28px; }
-    .section-title { font-size: 24px; }
-    .section-sub { font-size: 14px; }
-    
-    .exam-card-inner { padding: 20px; }
-    .exam-card-title { font-size: 16px; }
-    .exam-card-summary { font-size: 13px; }
-    .exam-tags li { font-size: 10px; padding: 3px 8px; }
-    
-    .steps { grid-template-columns: 1fr; gap: 10px; }
-    .step { padding: 16px; gap: 12px; }
-    .step-n { width: 28px; height: 28px; font-size: 10px; }
-    .step-t { font-size: 14px; }
-    .step-d { font-size: 12px; }
-    
-    .stats-grid { gap: 10px; }
-    .stat { padding: 16px; }
-    .stat-n { font-size: 24px; }
-    .stat-l { font-size: 11px; }
-    
-    .proof-section { padding-top: 40px; padding-bottom: 40px; }
-    .proof-right p { font-size: 13px; }
-    
-    .cta-section { padding: 48px 16px; }
-    .cta-title { font-size: 22px; }
-    .cta-sub { font-size: 14px; margin-bottom: 20px; }
-    .cta-chip { padding: 8px 14px; font-size: 12px; }
-    
-    .footer { padding: 36px 16px 24px; }
-    .footer-grid { grid-template-columns: 1fr; gap: 24px; }
-    .footer-tag { font-size: 12px; }
-    .footer ul a { font-size: 12px; }
-    .footer-bottom { font-size: 11px; }
+
+  .hero-actions {
+    flex-direction: column;
   }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+  }
+}
 `;

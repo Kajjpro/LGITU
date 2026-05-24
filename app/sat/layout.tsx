@@ -1,4 +1,4 @@
-import SatSidebarLayout from "@/app/components/satSidebar"
+import SatSidebarLayout from "@/app/satcomponents/page"
 import type { ReactNode } from "react";
 
 export default function Layout({ children }: { children: ReactNode }) {
