@@ -227,6 +227,7 @@ export default function SATOverviewPage() {
       <div className="page-bg" />
 
       <main className="sat-shell">
+        <a href="/" className="back-btn">← Home</a>
 
         {/* ── HERO ─────────────────────────────────────────────────────── */}
         <section className="hero">
@@ -247,14 +248,17 @@ export default function SATOverviewPage() {
               <div className="exam-top">
                 <div className="exam-select-wrap">
                   <div className="exam-label">{t.testDateLabel}</div>
-                  <select
-                    value={selectedDate}
-                    onChange={e => setSelectedDate(e.target.value)}
-                    className="exam-select"
-                    aria-label="Choose SAT test date"
-                  >
-                    {testDates.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
-                  </select>
+                  <div className="date-pills">
+                    {testDates.map(d => (
+                      <button
+                        key={d.value}
+                        onClick={() => setSelectedDate(d.value)}
+                        className={`date-pill${selectedDate === d.value ? " date-pill-active" : ""}`}
+                      >
+                        {d.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div className="exam-count">
                   {countdown.done ? "0" : String(countdown.days).padStart(2, "0")}
@@ -547,6 +551,71 @@ html { scroll-behavior: smooth; }
   padding: 42px 24px 80px;
 }
 
+/* ── Back button ── */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 18px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.75);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.back-btn:hover {
+  border-color: rgba(100,100,120,0.4);
+  color: var(--text);
+}
+
+html.dark .back-btn {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.5);
+}
+
+html.dark .back-btn:hover {
+  color: rgba(255,255,255,0.85);
+}
+
+/* ── Date pills ── */
+.date-pills {
+  margin-top: 7px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.date-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.13s, color 0.13s, border-color 0.13s;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.date-pill:hover {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.9);
+}
+
+.date-pill-active {
+  background: white;
+  border-color: white;
+  color: #111118;
+}
+
 /* ── Hero ── */
 .hero {
   display: grid;
@@ -652,24 +721,6 @@ html { scroll-behavior: smooth; }
   text-transform: uppercase;
 }
 
-.exam-select {
-  margin-top: 7px;
-  width: 100%;
-  min-width: 150px;
-  height: 40px;
-  padding: 0 12px;
-  border-radius: 13px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.1);
-  color: white;
-  font-size: 14px;
-  font-weight: 760;
-  outline: none;
-  cursor: pointer;
-  appearance: auto;
-}
-
-.exam-select option { color: black; }
 
 .exam-count {
   flex-shrink: 0;
