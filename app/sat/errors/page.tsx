@@ -217,7 +217,7 @@ export default function SATErrorLogPage() {
             onChange={e => setNote(e.target.value)}
             placeholder={t.notePh}
             rows={2}
-            className="mt-4 w-full resize-none rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-indigo-600"
+            className="mt-4 w-full resize-none rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-zinc-400 focus:border-indigo-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-indigo-600 dark:focus:bg-zinc-800"
           />
           <div className="mt-3 flex items-center gap-2">
             <button

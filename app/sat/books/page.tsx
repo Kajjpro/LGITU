@@ -11,62 +11,103 @@ type Book = {
   description?: string;
 };
 
+function toEmbedUrl(link: string): string {
+  const m = link.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  return link;
+}
+
 const Page = () => {
   const [allbooks, setAllBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
-
-  const callBooks = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch("/api/books/allbooks", { method: "GET" });
-      const data = await response.json();
-      setAllBooks(data);
-    } catch (error) {
-      console.error("Failed to fetch books:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [reader, setReader] = useState<Book | null>(null);
 
   useEffect(() => {
-    callBooks();
+    (async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/books/allbooks");
+        setAllBooks(await res.json());
+      } catch (e) {
+        console.error("Failed to fetch books:", e);
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = reader ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [reader]);
+
   const categories = useMemo(() => {
-    const unique = allbooks.map((book) => book.category).filter(Boolean) as string[];
+    const unique = allbooks.map((b) => b.category).filter(Boolean) as string[];
     return ["All", ...Array.from(new Set(unique))];
   }, [allbooks]);
 
   const filteredBooks = useMemo(() => {
     if (activeCategory === "All") return allbooks;
-    return allbooks.filter((book) => book.category === activeCategory);
+    return allbooks.filter((b) => b.category === activeCategory);
   }, [allbooks, activeCategory]);
 
   return (
     <main className="min-h-screen bg-[#f6f7fb] text-slate-950 dark:bg-zinc-950 dark:text-zinc-100">
+
+      {/* ── IN-SITE READER MODAL ── */}
+      {reader && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-zinc-950">
+          <div className="flex shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-4 py-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">SAT Books</p>
+              <h2 className="truncate text-sm font-bold text-zinc-100">{reader.name}</h2>
+            </div>
+            <div className="flex shrink-0 items-center gap-2 pl-4">
+              <a
+                href={reader.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-8 items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800 px-3 text-xs font-semibold text-zinc-300 transition hover:bg-zinc-700"
+              >
+                Open original ↗
+              </a>
+              <button
+                onClick={() => setReader(null)}
+                aria-label="Close reader"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-300 transition hover:bg-zinc-700"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+          <iframe
+            src={toEmbedUrl(reader.link)}
+            className="min-h-0 flex-1 w-full border-0"
+            allow="autoplay"
+            title={reader.name}
+          />
+        </div>
+      )}
+
       <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
         <a href="/sat" className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-zinc-500 transition hover:border-zinc-300 hover:text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200">← SAT</a>
+
         {/* Hero */}
         <div className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-8 lg:p-10">
           <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-sky-100 blur-3xl dark:bg-sky-900/20" />
-
           <div className="relative">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">
-                SAT Books
-              </p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">SAT Books</p>
               <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
                 {allbooks.length} books
               </span>
             </div>
-
             <h1 className="mt-4 max-w-3xl text-4xl font-bold tracking-[-0.055em] text-slate-950 dark:text-zinc-50 sm:text-5xl">
               Books that are actually useful for SAT prep.
             </h1>
-
             <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-600 dark:text-zinc-400 sm:text-base sm:leading-8">
-              A simple collection of SAT books for Math, Reading, Writing, and full test preparation. Pick one book and use it well.
+              Read any book directly here — no downloads, no redirects. Click a book to open it.
             </p>
           </div>
         </div>
@@ -93,15 +134,12 @@ const Page = () => {
           </div>
         )}
 
-        {/* Books */}
+        {/* Books grid */}
         <div className="mt-6">
           {loading ? (
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <div
-                  key={index}
-                  className="h-[330px] animate-pulse rounded-3xl border border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
-                />
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="h-[330px] animate-pulse rounded-3xl border border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900" />
               ))}
             </div>
           ) : filteredBooks.length === 0 ? (
@@ -112,12 +150,10 @@ const Page = () => {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {filteredBooks.map((book) => (
-                <a
+                <button
                   key={book.id}
-                  href={book.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-700"
+                  onClick={() => setReader(book)}
+                  className="group flex overflow-hidden rounded-3xl border border-slate-200 bg-white text-left shadow-sm transition duration-200 hover:-translate-y-1 hover:border-indigo-300 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-700"
                 >
                   <article className="flex w-full flex-col">
                     <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-zinc-800">
@@ -133,29 +169,24 @@ const Page = () => {
                         </span>
                       )}
                     </div>
-
                     <div className="flex flex-1 flex-col p-4">
-                      <h2 className="line-clamp-2 text-[16px] font-bold leading-snug tracking-[-0.025em] text-slate-950 dark:text-zinc-100">
+                      <h2 className="line-clamp-2 text-[15px] font-bold leading-snug tracking-tight text-slate-950 dark:text-zinc-100">
                         {book.name}
                       </h2>
-
                       {book.description && (
                         <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500 dark:text-zinc-400">
                           {book.description}
                         </p>
                       )}
-
                       <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4 dark:border-zinc-800">
-                        <span className="text-sm font-bold text-slate-950 dark:text-zinc-100">
-                          Open book
-                        </span>
-                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm text-slate-500 transition group-hover:bg-slate-950 group-hover:text-white dark:bg-zinc-800 dark:text-zinc-400 dark:group-hover:bg-zinc-100 dark:group-hover:text-zinc-950">
-                          ↗
+                        <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">Read now</span>
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 transition group-hover:bg-indigo-600 group-hover:text-white dark:bg-indigo-900/30 dark:text-indigo-400 dark:group-hover:bg-indigo-600 dark:group-hover:text-white">
+                          →
                         </span>
                       </div>
                     </div>
                   </article>
-                </a>
+                </button>
               ))}
             </div>
           )}

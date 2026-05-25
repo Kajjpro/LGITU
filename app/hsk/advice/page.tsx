@@ -3,16 +3,17 @@
 import { useSite } from "@/app/context";
 
 type Item = { number: string; title: string; body: React.ReactNode; highlight?: boolean };
+type Res = { name: string; descEn: string; descMn: string; tag: string; url: string; highlight?: boolean };
 
 const enStory: React.ReactNode[] = [
-  <>I have been learning chinese for nearly 10 years. I started at 6 years old. I got my hsk 6 passed with <strong className="font-semibold text-slate-950 dark:text-zinc-100">246/300</strong>. But i&apos;m gonna say that is not because i learned it for 10 years, it is because i listen, reading and speaking chinese everyday with non-stop.</>,
-  <>When i first start learning chinese, it feels so hard. They have a lot of characters. You have to memorize them all in order to understand the meaning of the passages or texts.</>,
-  <>First, i started to learning pin yin (拼音) when i was young, and learning basic chinese characters. It was hard on the beginning, but i can speak and read as time goes.</>,
-  <>However, my chinese comprehension still can&apos;t improve and stuck at around hsk3 level. I listened to an expert, he said: &ldquo;if you are learning a language, make it in your daily life&rdquo;.</>,
-  <>I decided to scroll chinese TikTok (抖音) or Kwai (快手) in order to make chinese adapt into my brain. it helped a lot. Start reading a fairy tales in chinese. First i cannot understand them all, i try to use translator to highlight the words i dont know and try to understand them all.</>,
-  <>Then i make chinese fully integrated into my life. As my reading comprehension increased, i try to read hard complex books in order to train my brain to hard passages. It worked very well.</>,
-  <>For speaking, Like the preparation for IELTS speaking, i speak with myself in chinese everyday.</>,
-  <>In 2024, i have a chance to study in China for 1 month. I learned Chinese culture deeply, and strengthned my language.</>,
+  <>I have been learning Chinese for nearly ten years. I started at age six. I passed HSK 6 with a score of <strong className="font-semibold text-slate-950 dark:text-zinc-100">246/300</strong>. But I should be clear — it was not because I studied for ten years. It was because I listened to, read, and spoke Chinese every single day without stopping.</>,
+  <>When I first started learning Chinese, it felt incredibly difficult. There are so many characters, and you have to memorise them to understand the meaning of any text.</>,
+  <>I began with pinyin (拼音) and basic Chinese characters when I was young. It was hard at first, but I was able to speak and read as time went on.</>,
+  <>However, my Chinese comprehension was stuck at around HSK 3 level and would not improve. Then I heard an expert say: &ldquo;If you are learning a language, bring it into your daily life.&rdquo;</>,
+  <>I decided to scroll Chinese TikTok (抖音) and Kwai (快手) to immerse my brain in the language — it helped enormously. I also started reading fairy tales in Chinese. At first I could not understand everything, so I used a translator to mark unfamiliar words and worked through them one by one.</>,
+  <>I then made Chinese fully part of my daily life. As my reading comprehension improved, I started reading more complex books to train my brain on harder passages. It worked extremely well.</>,
+  <>For speaking — just like my IELTS preparation — I spoke to myself in Chinese every single day.</>,
+  <>In 2024, I had the chance to study in China for one month. I immersed myself deeply in Chinese culture and strengthened my language significantly.</>,
 ];
 
 const mnStory: React.ReactNode[] = [
@@ -27,16 +28,16 @@ const mnStory: React.ReactNode[] = [
 ];
 
 const enItems: Item[] = [
-  { number: "01", title: "Memorize new words — constantly", highlight: true,
-    body: <>Most importantly, Memorize New Words constantly that will solve most problems.</> },
-  { number: "02", title: "Make yourself into the language",
-    body: <>You should read chinese books, listen and watch chinese videos including Chinese Tiktok, which is extremely addictive. Make yourself into the language and learn it.</> },
-  { number: "03", title: "Do tons of mock tests — and review every one",
-    body: <>Before the HSK exam, i did tons of mock tests. When i finish a full mock test, i review my answers every single time.</> },
+  { number: "01", title: "Memorise new words — constantly", highlight: true,
+    body: <>Most importantly, memorise new words constantly. This single habit will solve most problems on the exam.</> },
+  { number: "02", title: "Immerse yourself in the language",
+    body: <>Read Chinese books, watch Chinese videos — including Chinese TikTok, which is genuinely addictive. Immerse yourself fully in the language and let it become second nature.</> },
+  { number: "03", title: "Do many mock tests — and review every one",
+    body: <>Before the HSK exam, I completed a large number of mock tests. Each time I finished one, I reviewed every single answer carefully to understand my mistakes.</> },
   { number: "04", title: "Take the computer-based HSK",
-    body: <>Also, i suggest give a computer-based HSK. Because for the writing, you can use keyboard (pin yin) to type chinese characters.</> },
-  { number: "05", title: "Make it a habit",
-    body: <>Read, read, read. Watch, watch and watch. Make it a habit.</> },
+    body: <>I recommend taking the computer-based HSK. For the writing section, you can use a keyboard with pinyin to type Chinese characters — which is far easier than writing by hand.</> },
+  { number: "05", title: "Make it a daily habit",
+    body: <>Read, read, read. Watch, watch, watch. Consistency over months is what actually moves the needle.</> },
 ];
 
 const mnItems: Item[] = [
@@ -45,11 +46,71 @@ const mnItems: Item[] = [
   { number: "02", title: "Өөрийгөө хэлэнд нь ууст",
     body: <>Та хятад ном унш, хятад видео — маш донтуулдаг хятад TikTok зэргийг үзэж сонс. Өөрийгөө хэлэнд нь оруулж сур.</> },
   { number: "03", title: "Олон загвар шалгалт өг — бүрийг нь дүгнэ",
-    body: <>HSK шалгалтын өмнө би маш олон загвар шалгалт өгсөн. Бүтэн загвар шалгалт дуусгах бүрдээ хариултаа тал бүрээс нь шалгадаг.</> },
+    body: <>HSK шалгалтын өмнө би маш олон загвар шалгалт өгсөн. Бүтэн загвар шалгалт дуусгах бүрдээ алдаагаа ойлгохын тулд хариултаа тал бүрээс нь шалгадаг.</> },
   { number: "04", title: "Компьютерт суурилсан HSK өг",
-    body: <>Мөн би компьютерт суурилсан HSK өгөхийг зөвлөе. Учир нь бичих хэсэгт гар (пиньин) ашиглан ханз бичиж болно.</> },
-  { number: "05", title: "Үүнийг зуршил болго",
-    body: <>Унш, унш, унш. Үз, үз, үз. Үүнийг зуршил болго.</> },
+    body: <>Мөн би компьютерт суурилсан HSK өгөхийг зөвлөе. Учир нь бичих хэсэгт гар (пиньин) ашиглан ханз бичиж болно — гараар бичихээс хамаагүй хялбар.</> },
+  { number: "05", title: "Өдөр тутмын зуршил болго",
+    body: <>Унш, унш, унш. Үз, үз, үз. Сарууд дахь тогтмол байдал л үнэхээр үр дүн өгдөг.</> },
+];
+
+const hskResources: Res[] = [
+  {
+    name: "Pleco",
+    descEn: "The definitive Chinese dictionary app. Tap any character for stroke order, audio, example sentences, and HSK level. Install this first — everything else builds on it.",
+    descMn: "Хамгийн сайн хятад толь бичгийн апп. Дурын ханзыг дарахад зурах дараалал, дуу, жишээ өгүүлбэр, HSK түвшин харагдана. Эхлээд энийг татаж авч суулга.",
+    tag: "Dictionary · iOS & Android",
+    url: "https://www.pleco.com",
+    highlight: true,
+  },
+  {
+    name: "HSK Academy",
+    descEn: "Free HSK mock tests for all levels (1–6 and New HSK). Timed exams with answer explanations — essential for practising before the real thing.",
+    descMn: "Бүх түвшний (1–6 болон Шинэ HSK) үнэгүй загвар шалгалтууд. Тайлбартай хариулттай цагтай шалгалтууд — бодит шалгалтаас өмнө дадлага хийхэд зайлшгүй шаардлагатай.",
+    tag: "Practice Tests · All levels",
+    url: "https://www.hsk.academy",
+  },
+  {
+    name: "Chinese Grammar Wiki",
+    descEn: "AllSet Learning's grammar reference — every pattern categorised by HSK level with clear explanations and examples. Bookmark this and use it every time you hit a grammar gap.",
+    descMn: "AllSet Learning-ийн дүрмийн лавлах — HSK түвшнээр ангилагдсан бүх загвар тод тайлбар, жишээтэй. Дүрмийн цоорхой олдох бүрд нь хэрэглэ.",
+    tag: "Grammar · HSK 1–6",
+    url: "https://resources.allsetlearning.com/chinese/grammar",
+  },
+  {
+    name: "HelloChinese",
+    descEn: "A gamified beginner app that covers HSK 1–4 vocabulary and grammar. Good for building a daily reading and vocabulary habit in the early stages.",
+    descMn: "HSK 1–4-ийн үгс, дүрмийг хамарсан тоглоомчилсон анхан шатны апп. Эхэн үед өдөр тутмын уншлага, үгийн санг бий болгоход тохиромжтой.",
+    tag: "App · Beginner–Intermediate",
+    url: "https://www.hellochinese.cc",
+  },
+  {
+    name: "ChinesePod",
+    descEn: "Podcast-style lessons covering everyday topics from beginner to advanced. Great for building listening comprehension and picking up natural spoken patterns.",
+    descMn: "Анхан шатнаас дэвшилтэт хүртэл өдөр тутмын сэдвүүдийг хамарсан подкаст хичээлүүд. Сонсох чадварыг хөгжүүлж, байгалийн яриаг олж авахад тохиромжтой.",
+    tag: "Listening · All levels",
+    url: "https://www.chinesepod.com",
+  },
+  {
+    name: "Mandarin Corner",
+    descEn: "YouTube channel with slow, clearly-spoken interview videos subtitled in both Chinese and English. Perfect for HSK 4–6 listening practice — real conversations, real vocabulary.",
+    descMn: "Хятад болон англи хэлний хадмал орчуулгатай удаан, тод ярьсан ярилцлагын видеотой YouTube суваг. HSK 4–6-ийн сонсох дадлагад тохиромжтой — бодит харилцаа, бодит үгс.",
+    tag: "YouTube · Intermediate–Advanced",
+    url: "https://www.youtube.com/@MandarinCorner",
+  },
+  {
+    name: "Douyin (抖音)",
+    descEn: "The Chinese TikTok — the single best immersion tool once you reach HSK 3+. Short videos on every topic spoken at natural speed. This is what moved my comprehension from HSK 3 to HSK 6.",
+    descMn: "Хятад TikTok — HSK 3+ түвшинд хүрсний дараа хамгийн сайн умбалтын хэрэгсэл. Байгалийн хурдаар ярьсан бүх сэдвийн богино видеонууд. Минийг HSK 3-аас HSK 6 болгосон зүйл яг энэ.",
+    tag: "Immersion · HSK 3+",
+    url: "https://www.douyin.com",
+  },
+  {
+    name: "Anki",
+    descEn: "Spaced-repetition flashcard app. Build your own HSK vocabulary deck or download a pre-made one. Use it for 10–15 minutes every day — the best way to cement new characters.",
+    descMn: "Завсарласан давталтын флэшкарт апп. Өөрийн HSK үгийн сантай тараг үүсгэ эсвэл бэлэн тарагийг татаж ав. Өдөр бүр 10–15 минут хэрэглэ — шинэ ханзыг бэхжүүлэх хамгийн сайн арга.",
+    tag: "Vocabulary · All levels",
+    url: "https://apps.ankiweb.net",
+  },
 ];
 
 const T = {
@@ -61,9 +122,12 @@ const T = {
     adviceLabel: "02 · What worked", adviceTitle: "Key Takeaways",
     scoreLabel: "HSK 6 result",
     scores: [["84", "Reading"], ["82", "Listening"], ["80", "Writing"], ["246", "Total"]] as [string, string][],
-    pull: "IF YOU DON'T HAVE THE ENVIRONMENT, CREATE IT.",
-    closing: "If you stuck at hsk 1~4 and want to push to hsk5+ even 6 — it is not impossible. If you make an effort, everything will be available to you!",
-    footer: "Read, read, read. Watch, watch and watch. Make it a habit.",
+    pull: "IF YOU DON'T HAVE THE ENVIRONMENT — CREATE IT.",
+    closing: "If you are stuck at HSK 1–4 and want to push to HSK 5 or even HSK 6 — it is absolutely possible. Put in the effort, and everything will become available to you.",
+    resourceLabel: "03 · Tools", resourceTitle: "Resources",
+    resourceNote: "The tools I actually used — and still recommend.",
+    recommended: "Recommended",
+    footer: "Read, read, read. Watch, watch, watch. Make it a habit.",
   },
   mn: {
     badge: "HSK Зөвлөгөө", subbadge: "Хувийн туршлага",
@@ -74,7 +138,10 @@ const T = {
     scoreLabel: "HSK 6 дүн",
     scores: [["84", "Унших"], ["82", "Сонсох"], ["80", "Бичих"], ["246", "Нийт"]] as [string, string][],
     pull: "ХЭРЭВ ОРЧИН БАЙХГҮЙ БОЛ — ТҮҮНИЙГ БҮТЭЭ.",
-    closing: "Хэрэв та HSK 1~4-т тээглээд HSK5+, бүр 6 руу ахихыг хүсэж байвал — энэ боломжгүй зүйл биш. Хичээл зүтгэл гаргавал бүх зүйл боломжтой болно!",
+    closing: "Хэрэв та HSK 1–4-т тээглээд HSK 5+, бүр HSK 6 руу ахихыг хүсэж байвал — энэ огт боломжгүй зүйл биш. Хичээл зүтгэл гаргавал бүх зүйл боломжтой болно.",
+    resourceLabel: "03 · Хэрэгслүүд", resourceTitle: "Нөөцүүд",
+    resourceNote: "Би өөрөө хэрэглэсэн — одоо ч санал болгодог хэрэгслүүд.",
+    recommended: "Зөвлөмж",
     footer: "Унш, унш, унш. Үз, үз, үз. Үүнийг зуршил болго.",
   },
 };
@@ -124,7 +191,6 @@ export default function HSKAdvicePage() {
 
             {story.slice(0, 5).map((p, i) => <p key={i}>{p}</p>)}
 
-            {/* Pull quote */}
             <blockquote className="rounded-xl border-l-4 border-red-500 bg-red-50/60 px-4 py-3 dark:bg-red-900/20">
               <p className="text-base font-bold leading-7 tracking-[-0.02em] text-slate-800 dark:text-zinc-100 sm:text-lg">{t.pull}</p>
             </blockquote>
@@ -160,6 +226,41 @@ export default function HSKAdvicePage() {
         <blockquote className="my-6 rounded-xl border-l-4 border-red-500 bg-white p-4 shadow-sm dark:bg-zinc-900 sm:p-5">
           <p className="text-base font-semibold leading-7 tracking-[-0.02em] text-slate-800 dark:text-zinc-100 sm:text-lg">{t.closing}</p>
         </blockquote>
+      </section>
+
+      {/* RESOURCES */}
+      <section className="mb-10 sm:mb-14">
+        <div className="mb-4">
+          <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-400 dark:text-zinc-600 sm:text-[11px]">{t.resourceLabel}</div>
+          <h2 className="mt-1.5 text-2xl font-bold tracking-[-0.035em] text-slate-950 dark:text-zinc-50 sm:text-3xl">{t.resourceTitle}</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-zinc-400">{t.resourceNote}</p>
+        </div>
+
+        <div className="flex flex-col gap-2.5 sm:gap-3">
+          {hskResources.map((res) => (
+            <a
+              key={res.name}
+              href={res.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={["group flex items-start gap-4 rounded-2xl border p-4 transition hover:-translate-y-0.5 hover:shadow-md sm:p-5", res.highlight ? "border-red-200 bg-red-50/80 dark:border-red-800 dark:bg-red-900/20" : "border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"].join(" ")}
+            >
+              <div className="flex min-w-0 flex-1 flex-col">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-base font-bold tracking-[-0.03em] text-slate-950 dark:text-zinc-100 sm:text-lg">{res.name}</span>
+                  {res.highlight && (
+                    <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">{t.recommended}</span>
+                  )}
+                  <span className="rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">{res.tag}</span>
+                </div>
+                <p className="mt-1.5 text-sm leading-6 text-slate-600 dark:text-zinc-400 sm:text-[15px] sm:leading-7">
+                  {lang === "mn" ? res.descMn : res.descEn}
+                </p>
+              </div>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600 transition group-hover:bg-red-600 group-hover:text-white dark:bg-red-900/30 dark:text-red-400 dark:group-hover:bg-red-600 dark:group-hover:text-white">→</span>
+            </a>
+          ))}
+        </div>
       </section>
 
       <footer className="border-t border-zinc-200 pt-6 dark:border-zinc-800">

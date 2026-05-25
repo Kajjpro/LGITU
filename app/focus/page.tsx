@@ -39,6 +39,7 @@ const T = {
     setExam: "Save",
     clearExam: "Clear",
     editExam: "Edit",
+    autoStart: "Auto-start next session",
   },
   mn: {
     back: "Нүүр",
@@ -71,6 +72,7 @@ const T = {
     setExam: "Хадгалах",
     clearExam: "Арилгах",
     editExam: "Засах",
+    autoStart: "Дараагийг автомат эхлүүлэх",
   },
 };
 
@@ -88,6 +90,7 @@ const KEYS = {
   breakMin: "lgitu_breakMin",
   examName: "lgitu_examName",
   examDate: "lgitu_examDate",
+  autoStart: "lgitu_autoStart",
 };
 
 type SessionLog = { time: string; topic: string; duration: number };
@@ -134,6 +137,10 @@ export default function FocusPage() {
   const [nameDraft, setNameDraft] = useState("");
   const [dateDraft, setDateDraft] = useState("");
   const [editingExam, setEditingExam] = useState(false);
+  const [autoStart, setAutoStart] = useState(false);
+  const [focusDraft, setFocusDraft] = useState("25");
+  const [breakDraft, setBreakDraft] = useState("5");
+  const autoStartRef = useRef(false);
 
   const audioRef = useRef<AudioContext|null>(null);
 
@@ -142,6 +149,9 @@ export default function FocusPage() {
     const num = (k:string,d:number) => { const v=Number(localStorage.getItem(k)); return Number.isFinite(v)&&v>0?v:d; };
     const fm = num(KEYS.focusMin,25); const bm = num(KEYS.breakMin,5);
     setFocusMin(fm); setBreakMin(bm); setLeft(fm*60);
+    setFocusDraft(`${fm}`); setBreakDraft(`${bm}`);
+    const as = localStorage.getItem(KEYS.autoStart) === "1";
+    setAutoStart(as); autoStartRef.current = as;
 
     const today = dayKey();
     const storedLast = localStorage.getItem(KEYS.lastDay) ?? "";
@@ -198,9 +208,14 @@ export default function FocusPage() {
         if (mode==="focus") {
           recordSession(focusMin, topic);
           setFlash(t.sessionDone);
-          setMode("break"); return breakMin*60;
+          setMode("break");
+          if (!autoStartRef.current) setRunning(false);
+          return breakMin*60;
         } else {
-          setFlash(t.breakDone); setMode("focus"); return focusMin*60;
+          setFlash(t.breakDone);
+          setMode("focus");
+          if (!autoStartRef.current) setRunning(false);
+          return focusMin*60;
         }
       });
     }, 1000);
@@ -208,6 +223,7 @@ export default function FocusPage() {
   }, [running, mode, focusMin, breakMin, chime, recordSession, topic, t]);
 
   useEffect(() => { if (flash) { const id = setTimeout(()=>setFlash(null),3000); return ()=>clearTimeout(id); } }, [flash]);
+  useEffect(() => { autoStartRef.current = autoStart; }, [autoStart]);
 
   const total = (mode==="focus"?focusMin:breakMin)*60;
   const progress = total>0?1-left/total:0;
@@ -215,8 +231,15 @@ export default function FocusPage() {
 
   const switchMode = (m:"focus"|"break") => { if(m===mode) return; setMode(m); setRunning(false); setLeft((m==="focus"?focusMin:breakMin)*60); setFlash(null); };
 
-  const setFP = (n:number) => { setFocusMin(n); localStorage.setItem(KEYS.focusMin,`${n}`); if(mode==="focus"){setLeft(n*60);setRunning(false);} };
-  const setBP = (n:number) => { setBreakMin(n); localStorage.setItem(KEYS.breakMin,`${n}`); if(mode==="break"){setLeft(n*60);setRunning(false);} };
+  const setFP = (n:number) => { setFocusMin(n); setFocusDraft(`${n}`); localStorage.setItem(KEYS.focusMin,`${n}`); if(mode==="focus"){setLeft(n*60);setRunning(false);} };
+  const setBP = (n:number) => { setBreakMin(n); setBreakDraft(`${n}`); localStorage.setItem(KEYS.breakMin,`${n}`); if(mode==="break"){setLeft(n*60);setRunning(false);} };
+  const toggleAutoStart = () => {
+    setAutoStart(v => {
+      const next = !v;
+      localStorage.setItem(KEYS.autoStart, next ? "1" : "0");
+      return next;
+    });
+  };
 
   const reset = () => { setRunning(false); setLeft(total); setFlash(null); };
 
@@ -270,11 +293,11 @@ export default function FocusPage() {
           <div className="mb-5 flex flex-wrap items-end gap-3 rounded-2xl border border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
             <div>
               <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">{t.examName}</label>
-              <input value={nameDraft} onChange={e=>setNameDraft(e.target.value)} placeholder={t.examNamePh} className="h-9 rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-sm outline-none transition focus:border-violet-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 sm:w-48" />
+              <input value={nameDraft} onChange={e=>setNameDraft(e.target.value)} placeholder={t.examNamePh} className="h-9 rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-sm outline-none transition focus:border-violet-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:bg-zinc-800 sm:w-48" />
             </div>
             <div>
               <label className="mb-1 block text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">{t.examDate}</label>
-              <input type="date" value={dateDraft} onChange={e=>setDateDraft(e.target.value)} className="h-9 rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-sm outline-none transition focus:border-violet-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100" />
+              <input type="date" value={dateDraft} onChange={e=>setDateDraft(e.target.value)} className="h-9 rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-sm outline-none transition focus:border-violet-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:bg-zinc-800" />
             </div>
             <button onClick={saveExam} disabled={!dateDraft} className="h-9 rounded-xl bg-violet-600 px-4 text-sm font-bold text-white transition hover:bg-violet-700 disabled:opacity-40">{t.setExam}</button>
             {editingExam && <button onClick={()=>setEditingExam(false)} className="h-9 rounded-xl border border-zinc-200 px-4 text-sm font-semibold text-zinc-500 dark:border-zinc-700">{t.back}</button>}
@@ -319,7 +342,7 @@ export default function FocusPage() {
             {mode==="focus" && !running && (
               <div className="mt-4">
                 <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400 dark:text-zinc-500">{t.studying}</label>
-                <input value={topic} onChange={e=>setTopic(e.target.value)} placeholder={t.studyPh} className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100" />
+                <input value={topic} onChange={e=>setTopic(e.target.value)} placeholder={t.studyPh} className="w-full rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-indigo-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:focus:bg-zinc-800" />
               </div>
             )}
 
@@ -333,23 +356,52 @@ export default function FocusPage() {
             </div>
 
             {/* Length presets */}
-            <div className="mt-6 grid grid-cols-2 gap-4 border-t border-zinc-100 pt-5 dark:border-zinc-800">
-              <div>
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">{t.focus} · {t.length}</p>
-                <div className="flex gap-1.5">
-                  {FOCUS_PRESETS.map(n=>(
-                    <button key={n} onClick={()=>setFP(n)} className={["flex-1 rounded-lg py-1.5 text-sm font-bold transition",focusMin===n?"bg-indigo-600 text-white":"bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"].join(" ")}>{n}</button>
-                  ))}
+            <div className="mt-6 space-y-4 border-t border-zinc-100 pt-5 dark:border-zinc-800">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">{t.focus} · {t.length}</p>
+                  <div className="flex gap-1.5">
+                    {FOCUS_PRESETS.map(n=>(
+                      <button key={n} onClick={()=>setFP(n)} className={["flex-1 rounded-lg py-1.5 text-sm font-bold transition",focusMin===n?"bg-indigo-600 text-white":"bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"].join(" ")}>{n}</button>
+                    ))}
+                    <input
+                      type="number" min="1" max="180"
+                      value={focusDraft}
+                      onChange={e => setFocusDraft(e.target.value)}
+                      onBlur={() => { const v=parseInt(focusDraft); if(!isNaN(v)&&v>=1&&v<=180){setFP(v);}else{setFocusDraft(`${focusMin}`);} }}
+                      onKeyDown={e=>{ if(e.key==="Enter"){const v=parseInt(focusDraft);if(!isNaN(v)&&v>=1&&v<=180){setFP(v);}else{setFocusDraft(`${focusMin}`);}(e.target as HTMLInputElement).blur();} }}
+                      className="w-12 rounded-lg border border-zinc-200 bg-zinc-50 py-1.5 text-center text-sm font-bold text-zinc-700 outline-none focus:border-indigo-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:focus:bg-zinc-700 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">{t.brk} · {t.length}</p>
+                  <div className="flex gap-1.5">
+                    {BREAK_PRESETS.map(n=>(
+                      <button key={n} onClick={()=>setBP(n)} className={["flex-1 rounded-lg py-1.5 text-sm font-bold transition",breakMin===n?"bg-emerald-600 text-white":"bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"].join(" ")}>{n}</button>
+                    ))}
+                    <input
+                      type="number" min="1" max="60"
+                      value={breakDraft}
+                      onChange={e => setBreakDraft(e.target.value)}
+                      onBlur={() => { const v=parseInt(breakDraft); if(!isNaN(v)&&v>=1&&v<=60){setBP(v);}else{setBreakDraft(`${breakMin}`);} }}
+                      onKeyDown={e=>{ if(e.key==="Enter"){const v=parseInt(breakDraft);if(!isNaN(v)&&v>=1&&v<=60){setBP(v);}else{setBreakDraft(`${breakMin}`);}(e.target as HTMLInputElement).blur();} }}
+                      className="w-12 rounded-lg border border-zinc-200 bg-zinc-50 py-1.5 text-center text-sm font-bold text-zinc-700 outline-none focus:border-emerald-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:focus:bg-zinc-700 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    />
+                  </div>
                 </div>
               </div>
-              <div>
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">{t.brk} · {t.length}</p>
-                <div className="flex gap-1.5">
-                  {BREAK_PRESETS.map(n=>(
-                    <button key={n} onClick={()=>setBP(n)} className={["flex-1 rounded-lg py-1.5 text-sm font-bold transition",breakMin===n?"bg-emerald-600 text-white":"bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"].join(" ")}>{n}</button>
-                  ))}
-                </div>
-              </div>
+
+              {/* Auto-start toggle */}
+              <button
+                onClick={toggleAutoStart}
+                className={["flex items-center gap-2.5 self-start rounded-xl border px-3 py-2 text-xs font-bold transition", autoStart ? "border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300" : "border-zinc-200 bg-zinc-50 text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-400"].join(" ")}
+              >
+                <span className={["relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors", autoStart ? "bg-indigo-500" : "bg-zinc-300 dark:bg-zinc-600"].join(" ")}>
+                  <span className={["h-4 w-4 rounded-full bg-white shadow transition-transform", autoStart ? "translate-x-4" : "translate-x-0"].join(" ")} />
+                </span>
+                {t.autoStart}
+              </button>
             </div>
           </section>
 
