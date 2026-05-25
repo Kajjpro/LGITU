@@ -39,7 +39,7 @@ const resourceGroups: ResourceGroup[] = [
       },
       {
         title: "OnePrep",
-        url: "https://www.oneprep.app/",
+        url: "https://www.oneprep.xyz/",
         descEn: "Free SAT practice with explanations and timed sections.",
         descMn: "Тайлбар болон цагийн хязгаартай үнэгүй SAT дадлага.",
         tag: "Practice", tagColor: "blue",
