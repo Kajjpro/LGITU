@@ -2,6 +2,62 @@
 
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
+import { useSite } from "@/app/context";
+
+const T = {
+  en: {
+    eyebrow: "DIGITAL SAT PREP",
+    h1: "Start SAT prep without overthinking it.",
+    sub: "Resources, books, and honest advice — everything you need, nothing you don't.",
+    cta: "Choose an area",
+    testDateLabel: "SAT TEST DATE",
+    examPassed: "Exam passed",
+    until: "Until",
+    starterNote: "Pick the SAT date you are aiming for and study backward from the countdown.",
+    quickFacts: [
+      { label: "Score Range", value: "400–1600", text: "Total score" },
+      { label: "Sections",    value: "Reading + Math", text: "Main areas" },
+    ],
+    bestOrder: "Best Order",
+    bestOrderValue: "Resources → Books → Advice",
+    bestOrderText: "Follow this if you're just getting started.",
+    areasKicker: "PREPARATION AREAS",
+    areasTitle: "Pick where you want to start.",
+    areasSub: "One area at a time. Don't try to do everything at once.",
+    openSection: "Open section",
+    modules: [
+      { n: "01", label: "Resources", title: "Study Resources", text: "The tools and websites that actually help.", href: "/sat/resources", accent: "blue",   bullets: ["Official tools", "Websites"] },
+      { n: "02", label: "Books",     title: "Books",           text: "The prep books worth your time — and what to skip.", href: "/sat/books", accent: "purple", bullets: ["Book list", "What to skip"] },
+      { n: "03", label: "Advice",    title: "SAT Advice",      text: "Real strategies from someone who's been through it.", href: "/sat/advice", accent: "green",  bullets: ["Strategy", "Mistakes", "Mindset"] },
+    ],
+  },
+  mn: {
+    eyebrow: "DIGITAL SAT БЭЛТГЭЛ",
+    h1: "SAT бэлтгэлийг хэт их бодолгүйгээр эхэл.",
+    sub: "Эх сурвалж, ном, шударга зөвлөгөө — хэрэгтэй бүх зүйл, хэрэггүй ямар ч зүйлгүй.",
+    cta: "Хэсэг сонгох",
+    testDateLabel: "SAT ШАЛГАЛТЫН ОГНОО",
+    examPassed: "Шалгалт өнгөрсөн",
+    until: "Хүртэл",
+    starterNote: "Зорьж буй SAT огноогоо сонгоод тоолуураас хойшлон суд.",
+    quickFacts: [
+      { label: "Оноо", value: "400–1600", text: "Нийт оноо" },
+      { label: "Хэсгүүд", value: "Унших + Математик", text: "Үндсэн хэсгүүд" },
+    ],
+    bestOrder: "Зөвлөмж дараалал",
+    bestOrderValue: "Эх сурвалж → Ном → Зөвлөгөө",
+    bestOrderText: "Яг эхэлж байгаа бол энэ дарааллыг дага.",
+    areasKicker: "БЭЛТГЭЛИЙН ХЭСГҮҮД",
+    areasTitle: "Хаанаас эхлэхээ сонго.",
+    areasSub: "Нэг хэсэг нэг удаа. Бүгдийг нэгэн зэрэг хийхийг оролдож болохгүй.",
+    openSection: "Хэсэг нээх",
+    modules: [
+      { n: "01", label: "Эх сурвалж", title: "Сурах материалууд", text: "Үнэхээр тус болдог хэрэгсэл, вэбсайтууд.", href: "/sat/resources", accent: "blue",   bullets: ["Албан ёсны хэрэгсэл", "Вэбсайтууд"] },
+      { n: "02", label: "Номнууд",     title: "Номнууд",           text: "Цагаа зүйтэй бэлтгэлийн номнууд — болон юуг алгасах.", href: "/sat/books", accent: "purple", bullets: ["Номны жагсаалт", "Юуг алгасах вэ"] },
+      { n: "03", label: "Зөвлөгөө",   title: "SAT Зөвлөгөө",      text: "Туулж өнгөрсөн хүний бодит стратеги, туршлага.", href: "/sat/advice", accent: "green",  bullets: ["Стратеги", "Алдаанууд", "Оюун ухаан"] },
+    ],
+  },
+};
 
 const testDates = [
   { label: "Jun 6, 2026", value: "2026-06-06" },
@@ -10,41 +66,6 @@ const testDates = [
   { label: "Oct 3, 2026", value: "2026-10-03" },
   { label: "Nov 7, 2026", value: "2026-11-07" },
   { label: "Dec 5, 2026", value: "2026-12-05" },
-];
-
-const modules = [
-  {
-    n: "01",
-    label: "Resources",
-    title: "Study Resources",
-    text: "Useful SAT tools and platforms to start with.",
-    href: "/sat/resources",
-    accent: "blue",
-    bullets: ["Official tools", "Websites"],
-  },
-  {
-    n: "02",
-    label: "Books",
-    title: "Books",
-    text: "Prep books ranked by real usefulness.",
-    href: "/sat/books",
-    accent: "purple",
-    bullets: ["Book list", "What to skip"],
-  },
-  {
-    n: "03",
-    label: "Advice",
-    title: "SAT Advice",
-    text: "Simple tips to avoid confusion and study smarter.",
-    href: "/sat/advice",
-    accent: "green",
-    bullets: ["Strategy", "Mistakes", "Mindset"],
-  },
-];
-
-const quickFacts = [
-  { label: "Score Range", value: "400–1600", text: "Total score" },
-  { label: "Sections", value: "Reading + Math", text: "Main areas" },
 ];
 
 const ZERO_CD = {
@@ -118,6 +139,8 @@ function ArrowUpRight() {
 export default function SATOverviewPage() {
   const [selectedDate, setSelectedDate] = useState(getClosestDate);
   const [countdown, setCountdown] = useState(ZERO_CD);
+  const { lang } = useSite();
+  const t = lang === "mn" ? T.mn : T.en;
 
   const selectedDateLabel = useMemo(() => {
     return testDates.find((date) => date.value === selectedDate)?.label;
@@ -125,11 +148,7 @@ export default function SATOverviewPage() {
 
   useEffect(() => {
     setCountdown(getCountdown(selectedDate));
-
-    const id = setInterval(() => {
-      setCountdown(getCountdown(selectedDate));
-    }, 1000);
-
+    const id = setInterval(() => { setCountdown(getCountdown(selectedDate)); }, 1000);
     return () => clearInterval(id);
   }, [selectedDate]);
 
@@ -141,17 +160,12 @@ export default function SATOverviewPage() {
       <main className="sat-shell">
         <section className="hero">
           <div className="hero-copy">
-            <div className="eyebrow">DIGITAL SAT PREP</div>
-
-            <h1>Start SAT prep without overthinking it.</h1>
-
-            <p className="subtitle">
-              A simple SAT guide for resources, books, and practical advice.
-            </p>
-
+            <div className="eyebrow">{t.eyebrow}</div>
+            <h1>{t.h1}</h1>
+            <p className="subtitle">{t.sub}</p>
             <div className="hero-actions">
               <a href="#areas" className="btn-primary">
-                Choose an area
+                {t.cta}
                 <ArrowRight />
               </a>
             </div>
@@ -161,8 +175,7 @@ export default function SATOverviewPage() {
             <div className="exam-widget">
               <div className="exam-top">
                 <div className="exam-select-wrap">
-                  <div className="exam-label">SAT TEST DATE</div>
-
+                  <div className="exam-label">{t.testDateLabel}</div>
                   <select
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
@@ -170,98 +183,78 @@ export default function SATOverviewPage() {
                     aria-label="Choose SAT test date"
                   >
                     {testDates.map((date) => (
-                      <option key={date.value} value={date.value}>
-                        {date.label}
-                      </option>
+                      <option key={date.value} value={date.value}>{date.label}</option>
                     ))}
                   </select>
                 </div>
-
                 <div className="exam-count">
                   {countdown.done ? "0" : String(countdown.days).padStart(2, "0")}
                   <span>d</span>
                 </div>
               </div>
-
               <div className="exam-sub">
-                {countdown.done ? "Exam passed" : `Until ${selectedDateLabel}`}
+                {countdown.done ? t.examPassed : `${t.until} ${selectedDateLabel}`}
               </div>
-
               <div className="exam-time">
                 <span>{String(countdown.hours).padStart(2, "0")}h</span>
                 <span>{String(countdown.minutes).padStart(2, "0")}m</span>
                 <span>{String(countdown.seconds).padStart(2, "0")}s</span>
               </div>
             </div>
-
-            <div className="starter-note">
-              Pick the SAT date you are aiming for and study backward from the
-              countdown.
-            </div>
+            <div className="starter-note">{t.starterNote}</div>
           </aside>
         </section>
 
         <section className="quick-grid">
-          {quickFacts.map((item) => (
+          {t.quickFacts.map((item) => (
             <div key={item.label} className="quick-card">
               <div className="quick-label">{item.label}</div>
               <div className="quick-value">{item.value}</div>
               <p>{item.text}</p>
             </div>
           ))}
-
           <div className="quick-card dark-card">
-            <div className="quick-label">Best Order</div>
-            <div className="quick-value">Resources → Books → Advice</div>
-            <p>Use this if you feel lost.</p>
+            <div className="quick-label">{t.bestOrder}</div>
+            <div className="quick-value">{t.bestOrderValue}</div>
+            <p>{t.bestOrderText}</p>
           </div>
         </section>
 
         <section id="areas" className="areas-section">
           <div className="areas-header">
             <div>
-              <div className="areas-kicker">PREPARATION AREAS</div>
-              <h2>Choose what you need first</h2>
+              <div className="areas-kicker">{t.areasKicker}</div>
+              <h2>{t.areasTitle}</h2>
             </div>
-
-            <p>Pick one area and start there.</p>
+            <p>{t.areasSub}</p>
           </div>
 
           <div className="module-grid">
-            {modules.map((m) => (
-              <Link
-                key={m.href}
-                href={m.href}
-                className={`module-card ${m.accent}`}
-              >
-                <div className="module-top">
-                  <span className="module-number">{m.n}</span>
-
-                  <span className="module-arrow">
-                    <ArrowUpRight />
-                  </span>
-                </div>
-
-                <div className="module-body">
-                  <div className="module-label">{m.label}</div>
-
-                  <h3>{m.title}</h3>
-
-                  <p>{m.text}</p>
-
-                  <div className="module-bullets">
-                    {m.bullets.map((b) => (
-                      <span key={b}>{b}</span>
-                    ))}
+            {t.modules.map((m) => {
+              const isAdvice = m.href.endsWith("/advice");
+              return (
+                <Link key={m.href} href={m.href} className={`module-card ${m.accent}${isAdvice ? " module-star" : ""}`}>
+                  <div className="module-top">
+                    <span className="module-number">{m.n}</span>
+                    {isAdvice
+                      ? <span className="module-key-badge">{lang === "mn" ? "★ Хамгийн чухал" : "★ Most Important"}</span>
+                      : <span className="module-arrow"><ArrowUpRight /></span>}
                   </div>
-                </div>
-
-                <div className="module-footer">
-                  Open section
-                  <ArrowRight />
-                </div>
-              </Link>
-            ))}
+                  <div className="module-body">
+                    <div className="module-label">{m.label}</div>
+                    <h3>{m.title}</h3>
+                    <p>{m.text}</p>
+                    <div className="module-bullets">
+                      {m.bullets.map((b) => <span key={b}>{b}</span>)}
+                    </div>
+                  </div>
+                  <div className="module-footer">
+                    {t.openSection}
+                    <ArrowRight />
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
       </main>
@@ -280,6 +273,34 @@ const css = `
   --blue: #4F46E5;
   --purple: #7C3AED;
   --green: #059669;
+}
+
+html.dark .sat-page {
+  --bg: #09090E;
+  --text: #F1F0F5;
+  --muted: #9CA0AE;
+  --muted-2: #6B7280;
+  --border: rgba(255,255,255,0.08);
+}
+
+html.dark .hero-copy {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.07);
+}
+
+html.dark .quick-card {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.07);
+}
+
+html.dark .module-card {
+  background: #18181f;
+  color: #F1F0F5;
+}
+
+html.dark .module-bullets span {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.08);
 }
 
 * {
@@ -707,6 +728,21 @@ html {
   gap: 8px;
   font-size: 14px;
   font-weight: 780;
+}
+
+.module-key-badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--green);
+  color: white;
+  font-size: 11px;
+  font-weight: 780;
+  letter-spacing: 0.01em;
+}
+
+.module-star {
+  box-shadow: 0 20px 60px rgba(5,150,105,0.22), 0 0 0 2px rgba(5,150,105,0.18);
+  border-color: rgba(5,150,105,0.20) !important;
 }
 
 @media (max-width: 1080px) {
