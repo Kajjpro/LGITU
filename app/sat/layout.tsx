@@ -1,4 +1,4 @@
-import SatSidebarLayout from "@/app/satcomponents/page"
+import SatSidebarLayout from "@/app/satcomponents/satSidebar"
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
