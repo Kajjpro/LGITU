@@ -12,6 +12,9 @@ type Resource = {
   bestForEn: string;
   bestForMn: string;
   image?: string;
+  featured?: boolean;
+  featuredNoteEn?: string;
+  featuredNoteMn?: string;
 };
 
 type ResourceGroup = {
@@ -25,10 +28,32 @@ type ResourceGroup = {
 
 const resourceGroups: ResourceGroup[] = [
   {
-    titleEn: "Start Here",   titleMn: "Эндээс эхэл",
-    id: "start-here",
-    labelEn: "Begin with these", labelMn: "Эдгээрээс эхэл",
+    titleEn: "Practice Tests",   titleMn: "Дадлагын шалгалтууд",
+    id: "practice-tests",
+    labelEn: "Most accurate practice", labelMn: "Хамгийн нарийвчлалтай дадлага",
     resources: [
+      {
+        title: "Bluebook Mock Exam",
+        url: "https://bluebook.app.collegeboard.org/",
+        descEn: "The only fully official Digital SAT mock — exact adaptive format, real scoring, real test conditions. Use these before anything else.",
+        descMn: "Цорын ганц бүрэн албан ёсны Digital SAT дадлагын шалгалт — яг адаптив форматтай, жинхэнэ оноотой, жинхэнэ шалгалтын нөхцөлтэй.",
+        tag: "Official Mock", tagColor: "amber",
+        bestForEn: "Most accurate full-length practice", bestForMn: "Хамгийн нарийвчлалтай бүтэн шалгалт",
+        featured: true,
+        featuredNoteEn: "★ Most accurate — start here",
+        featuredNoteMn: "★ Хамгийн нарийвчлалтай — эндээс эхэл",
+      },
+      {
+        title: "Bluebooky",
+        url: "https://bluebooky.com",
+        descEn: "Real SAT past papers in digital adaptive format. The closest thing to the actual test outside of Bluebook. Highly recommended.",
+        descMn: "Жинхэнэ SAT-ийн өнгөрсөн шалгалтын асуулт — Bluebook-оос гадна бодит шалгалтын туршлагатай хамгийн дөхдөг. Маш чухал.",
+        tag: "Past Papers", tagColor: "rose",
+        bestForEn: "Real past paper practice", bestForMn: "Жинхэнэ өнгөрсөн шалгалт дадлага",
+        featured: true,
+        featuredNoteEn: "★ Real SAT past papers — highly recommended",
+        featuredNoteMn: "★ Жинхэнэ SAT өнгөрсөн асуулт — маш чухал",
+      },
       {
         title: "College Board SAT Question Bank",
         url: "https://satsuiteeducatorquestionbank.collegeboard.org",
@@ -130,8 +155,8 @@ export default function SATResourcesPage() {
   const isMn = lang === "mn";
 
   const header = isMn
-    ? { badge: "SAT Эх сурвалж", total: `${totalResources} нийт`, title: "Үнэхээр тус болдог эх сурвалжаас эхэл.", sub: "Богино, зохион байгуулагдсан жагсаалт. Цөөн эх сурвалжийг гүнзгий ашигла.", stepLabel: "Алхам", footer: "Нэг эх сурвалжийг сайн ашигласны дараа дараагийнх руу оч." }
-    : { badge: "SAT Resources", total: `${totalResources} total`, title: "Start with resources that actually help.", sub: "A short, organized list. Use fewer resources deeply — don't collect more.", stepLabel: "Step", footer: "Use one resource well before adding another." };
+    ? { badge: "SAT Эх сурвалж", total: `${totalResources} нийт`, title: "Үнэхээр тус болдог эх сурвалжаас эхэл.", sub: "Богино, зохион байгуулагдсан жагсаалт. Цөөн эх сурвалжийг гүнзгий ашигла.", footer: "Нэг эх сурвалжийг сайн ашигласны дараа дараагийнх руу оч." }
+    : { badge: "SAT Resources", total: `${totalResources} total`, title: "Start with resources that actually help.", sub: "A short, organized list. Use fewer resources deeply — don't collect more.", footer: "Use one resource well before adding another." };
 
   return (
     <main className="min-h-screen bg-[#F6F7FB] text-slate-950 antialiased dark:bg-zinc-950 dark:text-zinc-100">
@@ -190,51 +215,96 @@ export default function SATResourcesPage() {
               </div>
 
               <div className="flex flex-col gap-2.5 sm:gap-3">
-                {group.resources.map((resource, idx) => (
-                  <a
-                    key={resource.url}
-                    href={resource.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm transition duration-200 hover:border-indigo-200 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-800 sm:gap-4 sm:rounded-[1.25rem] sm:p-4"
-                  >
-                    {resource.image ? (
-                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-zinc-100 ring-1 ring-zinc-200 dark:ring-zinc-800 sm:h-16 sm:w-16">
-                        <img src={resource.image} alt={resource.title} loading="lazy" className="h-full w-full object-cover" />
-                      </div>
-                    ) : (
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-zinc-50 font-mono text-sm font-bold tabular-nums text-zinc-400 ring-1 ring-zinc-200 dark:bg-zinc-800 dark:ring-zinc-700 sm:h-16 sm:w-16">
-                        {String(idx + 1).padStart(2, "0")}
-                      </div>
-                    )}
+                {group.resources.map((resource, idx) => {
+                  const isFeatured = resource.featured;
+                  const featuredNote = isMn ? resource.featuredNoteMn : resource.featuredNoteEn;
 
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="text-[14px] font-bold tracking-[-0.015em] text-slate-950 transition group-hover:text-indigo-700 dark:text-zinc-100 dark:group-hover:text-indigo-400 sm:text-[16px]">
-                          {resource.title}
-                        </h3>
-                        <span className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold sm:inline-flex ${tagStyles[resource.tagColor]}`}>
-                          {resource.tag}
-                        </span>
+                  return (
+                    <a
+                      key={resource.url}
+                      href={resource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={[
+                        "group flex items-center gap-3 rounded-2xl border p-3 shadow-sm transition duration-200 sm:gap-4 sm:rounded-[1.25rem] sm:p-4",
+                        isFeatured
+                          ? resource.tagColor === "amber"
+                            ? "border-amber-200 bg-amber-50/60 hover:border-amber-300 hover:shadow-md dark:border-amber-800/60 dark:bg-amber-900/10 dark:hover:border-amber-700"
+                            : "border-rose-200 bg-rose-50/60 hover:border-rose-300 hover:shadow-md dark:border-rose-800/60 dark:bg-rose-900/10 dark:hover:border-rose-700"
+                          : "border-zinc-200 bg-white hover:border-indigo-200 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-800",
+                      ].join(" ")}
+                    >
+                      {resource.image ? (
+                        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-zinc-100 ring-1 ring-zinc-200 dark:ring-zinc-800 sm:h-16 sm:w-16">
+                          <img src={resource.image} alt={resource.title} loading="lazy" className="h-full w-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className={[
+                          "flex h-14 w-14 shrink-0 items-center justify-center rounded-xl font-mono text-sm font-bold tabular-nums ring-1 sm:h-16 sm:w-16",
+                          isFeatured
+                            ? resource.tagColor === "amber"
+                              ? "bg-amber-100 text-amber-700 ring-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:ring-amber-800"
+                              : "bg-rose-100 text-rose-700 ring-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:ring-rose-800"
+                            : "bg-zinc-50 text-zinc-400 ring-zinc-200 dark:bg-zinc-800 dark:ring-zinc-700",
+                        ].join(" ")}>
+                          {String(idx + 1).padStart(2, "0")}
+                        </div>
+                      )}
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className={[
+                            "text-[14px] font-bold tracking-[-0.015em] transition sm:text-[16px]",
+                            isFeatured
+                              ? resource.tagColor === "amber"
+                                ? "text-amber-900 group-hover:text-amber-700 dark:text-amber-200 dark:group-hover:text-amber-300"
+                                : "text-rose-900 group-hover:text-rose-700 dark:text-rose-200 dark:group-hover:text-rose-300"
+                              : "text-slate-950 group-hover:text-indigo-700 dark:text-zinc-100 dark:group-hover:text-indigo-400",
+                          ].join(" ")}>
+                            {resource.title}
+                          </h3>
+                          <span className={`hidden shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold sm:inline-flex ${tagStyles[resource.tagColor] ?? tagStyles.indigo}`}>
+                            {resource.tag}
+                          </span>
+                        </div>
+
+                        <p className="mt-0.5 line-clamp-2 text-[12px] leading-[1.5] text-zinc-500 dark:text-zinc-400 sm:text-sm">
+                          {isMn ? resource.descMn : resource.descEn}
+                        </p>
+
+                        <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                          <span className="text-[11px] font-medium text-zinc-400 dark:text-zinc-500 sm:text-xs">
+                            {isMn ? "Хамгийн тохиромжтой:" : "Best for:"}{" "}
+                            <span className="font-semibold text-zinc-600 dark:text-zinc-300">
+                              {isMn ? resource.bestForMn : resource.bestForEn}
+                            </span>
+                          </span>
+                          {isFeatured && featuredNote && (
+                            <span className={[
+                              "rounded-full px-2 py-0.5 text-[10px] font-bold",
+                              resource.tagColor === "amber"
+                                ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+                                : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
+                            ].join(" ")}>
+                              {featuredNote}
+                            </span>
+                          )}
+                        </div>
                       </div>
 
-                      <p className="mt-0.5 line-clamp-2 text-[12px] leading-[1.5] text-zinc-500 dark:text-zinc-400 sm:text-sm">
-                        {isMn ? resource.descMn : resource.descEn}
-                      </p>
-
-                      <div className="mt-1.5 text-[11px] font-medium text-zinc-400 dark:text-zinc-500 sm:text-xs">
-                        {isMn ? "Хамгийн тохиромжтой:" : "Best for:"}{" "}
-                        <span className="font-semibold text-zinc-600 dark:text-zinc-300">
-                          {isMn ? resource.bestForMn : resource.bestForEn}
-                        </span>
+                      <div className={[
+                        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full ring-1 transition sm:h-9 sm:w-9",
+                        isFeatured
+                          ? resource.tagColor === "amber"
+                            ? "bg-amber-100 text-amber-600 ring-amber-200 group-hover:bg-amber-600 group-hover:text-white dark:bg-amber-900/30 dark:ring-amber-800 dark:group-hover:bg-amber-600"
+                            : "bg-rose-100 text-rose-600 ring-rose-200 group-hover:bg-rose-600 group-hover:text-white dark:bg-rose-900/30 dark:ring-rose-800 dark:group-hover:bg-rose-600"
+                          : "bg-zinc-100 text-zinc-500 ring-zinc-200 group-hover:bg-indigo-600 group-hover:text-white dark:bg-zinc-800 dark:ring-zinc-700 dark:group-hover:bg-indigo-600",
+                      ].join(" ")}>
+                        <ArrowUpRight />
                       </div>
-                    </div>
-
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-zinc-500 ring-1 ring-zinc-200 transition group-hover:bg-indigo-600 group-hover:text-white dark:bg-zinc-800 dark:ring-zinc-700 dark:group-hover:bg-indigo-600 sm:h-9 sm:w-9">
-                      <ArrowUpRight />
-                    </div>
-                  </a>
-                ))}
+                    </a>
+                  );
+                })}
               </div>
             </section>
           ))}

@@ -317,10 +317,6 @@ html.dark .hp-grid-bg {
 .hp-b2 { width: 500px; height: 500px; bottom: -180px; right: -120px; background: #FB923C; }
 
 /* logo dark/light */
-html.dark .hp-root .logo-mark  { background: #fff; box-shadow: 0 6px 18px rgba(255,255,255,0.08); }
-html.dark .hp-root .logo-cap   { background: #111118; }
-html.dark .hp-root .logo-cap::after { background: #fff; }
-html.dark .hp-root .logo-arrow { color: #818CF8; }
 html.dark .hp-root .logo-name  { color: var(--tx); }
 html.dark .hp-root .logo-tagline { color: var(--mu2); }
 html.dark .hp-root .site-logo:hover .logo-name { color: var(--sat); }
@@ -455,10 +451,11 @@ html.dark .hp-nav-focus { color: #A78BFA !important; }
 
 .hp-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .hp-chip  {
-  padding: 8px 20px; border-radius: 999px;
-  font-size: 14px; font-weight: 800; letter-spacing: -0.01em;
+  padding: 9px 22px; border-radius: 999px;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
   text-decoration: none; border: 1px solid transparent;
-  transition: transform .18s, filter .18s;
+  font-feature-settings: "ss01";
+  transition: transform .18s, filter .18s, box-shadow .18s;
 }
 .hp-chip.sat   { background: var(--satd);  color: var(--sat);   border-color: var(--satg);  }
 .hp-chip.ielts { background: var(--ielsd); color: var(--ielts); border-color: var(--ielsg); }
@@ -518,7 +515,10 @@ html.dark .hp-nav-focus { color: #A78BFA !important; }
 }
 .hp-gcard:hover .hp-garrow { transform: translate(3px,-3px); color: var(--tx); }
 
-.hp-gname   { padding: 14px 20px 0; font-size: 48px; font-weight: 900; letter-spacing: -0.02em; line-height: 0.92; color: var(--tx); }
+.hp-gname   { padding: 14px 20px 0; font-size: 42px; font-weight: 800; letter-spacing: 0.02em; line-height: 1; color: var(--tx); }
+.hp-gcard.sat   .hp-gname { color: var(--sat); }
+.hp-gcard.ielts .hp-gname { color: var(--ielts); }
+.hp-gcard.hsk   .hp-gname { color: var(--hsk); }
 .hp-glabel  { padding: 7px 20px 0; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--mu2); }
 .hp-gdesc   { padding: 14px 20px 0; color: var(--mu); font-size: 14px; line-height: 1.68; }
 .hp-gfoot   { padding: 18px 20px 20px; display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: var(--tx); }

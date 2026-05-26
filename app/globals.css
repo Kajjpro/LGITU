@@ -13,46 +13,22 @@
     width: 38px;
     height: 38px;
     border-radius: 13px;
-    background: #111118;
+    background: linear-gradient(135deg, #6366f1, #4338ca);
     color: white;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     position: relative;
     flex-shrink: 0;
-    box-shadow: 0 12px 28px rgba(17, 17, 24, 0.16);
+    box-shadow: 0 12px 28px rgba(79, 70, 229, 0.28);
   }
-  
-  .logo-cap {
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    background: white;
-    transform: rotate(45deg);
-    opacity: 0.96;
+
+  .logo-cap-svg {
+    width: 26px;
+    height: 26px;
+    display: block;
   }
-  
-  .logo-cap::after {
-    content: "";
-    position: absolute;
-    width: 10px;
-    height: 3px;
-    border-radius: 999px;
-    background: #111118;
-    left: 4px;
-    top: 7px;
-  }
-  
-  .logo-arrow {
-    position: absolute;
-    right: 5px;
-    top: 3px;
-    font-size: 13px;
-    font-weight: 800;
-    line-height: 1;
-    color: #a5b4fc;
-  }
-  
+
   .logo-wordmark {
     display: flex;
     flex-direction: column;
@@ -78,7 +54,7 @@
   
   .site-logo:hover .logo-mark {
     transform: translateY(-1px);
-    box-shadow: 0 16px 34px rgba(17, 17, 24, 0.2);
+    box-shadow: 0 16px 34px rgba(79, 70, 229, 0.38);
   }
   
   .site-logo:hover .logo-name {
@@ -103,12 +79,12 @@
       height: 34px;
       border-radius: 11px;
     }
-  
-    .logo-cap {
-      width: 16px;
-      height: 16px;
+
+    .logo-cap-svg {
+      width: 23px;
+      height: 23px;
     }
-  
+
     .logo-name {
       font-size: 17px;
     }

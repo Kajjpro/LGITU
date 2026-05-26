@@ -81,6 +81,10 @@ const T = {
     goalReached: "Target reached",
     noScores: "Log your first practice score above — it will show up here.",
     recentLabel: "RECENT",
+    progressLabel: "PROGRESS",
+    sessionsLabel: "Sessions",
+    avgLabel: "Average",
+    bestLabel: "Best",
     areasKicker: "PREPARATION AREAS",
     areasTitle: "Pick where you want to start.",
     areasSub: "One area at a time — depth beats breadth every time.",
@@ -89,7 +93,7 @@ const T = {
       { n: "01", label: "Resources", title: "Study Resources", text: "The tools that actually move the needle.", href: "/sat/resources", accent: "blue",   bullets: ["Official tools", "Key websites"] },
       { n: "02", label: "Books",     title: "Books",           text: "The prep books worth reading — and what to skip.", href: "/sat/books",     accent: "purple", bullets: ["Book list", "What to skip"] },
       { n: "03", label: "Advice",    title: "SAT Advice",      text: "Real strategies from someone who's been through it.", href: "/sat/advice",   accent: "green",  bullets: ["Strategy", "Mindset", "Mistakes"] },
-      { n: "04", label: "Error Log", title: "Error Log",       text: "Log every wrong answer. Find the patterns. Fix them.", href: "/sat/errors",   accent: "orange", bullets: ["Track mistakes", "Weak spots", "Progress"] },
+      { n: "04", label: "Review Mistakes", title: "Review Mistakes", text: "Log every wrong answer, master your weak spots, and review them until they stick.", href: "/sat/errors",   accent: "orange", bullets: ["Track mistakes", "Review mode", "Master weak spots"] },
     ],
   },
   mn: {
@@ -121,6 +125,10 @@ const T = {
     goalReached: "Зорилт хүрсэн",
     noScores: "Дадлагын анхны оноогоо дээр нэм — энд харагдана.",
     recentLabel: "СҮҮЛИЙН",
+    progressLabel: "АХИЦ",
+    sessionsLabel: "Дадлага",
+    avgLabel: "Дундаж",
+    bestLabel: "Хамгийн сайн",
     areasKicker: "БЭЛТГЭЛИЙН ХЭСГҮҮД",
     areasTitle: "Хаанаас эхлэхээ сонго.",
     areasSub: "Нэг хэсэг нэг удаа — гүнзгийрэл нь өргөнийг ялна.",
@@ -129,7 +137,7 @@ const T = {
       { n: "01", label: "Эх сурвалж", title: "Сурах материалууд",   text: "Үнэхээр тус болдог хэрэгсэл, вэбсайтууд.",    href: "/sat/resources", accent: "blue",   bullets: ["Албан ёсны хэрэгсэл", "Вэбсайтууд"] },
       { n: "02", label: "Номнууд",     title: "Номнууд",              text: "Цагаа зүйтэй бэлтгэлийн номнууд.",            href: "/sat/books",     accent: "purple", bullets: ["Номны жагсаалт", "Юуг алгасах вэ"] },
       { n: "03", label: "Зөвлөгөө",   title: "SAT Зөвлөгөө",         text: "Туулж өнгөрсөн хүний бодит стратеги.",        href: "/sat/advice",   accent: "green",  bullets: ["Стратеги", "Оюун ухаан", "Алдаанууд"] },
-      { n: "04", label: "Алдааны тэмдэглэл", title: "Алдааны тэмдэглэл", text: "Алдаа бүрийг бич. Загварыг ол. Засаарай.", href: "/sat/errors",   accent: "orange", bullets: ["Алдаа бичих", "Сул талууд", "Ахиц"] },
+      { n: "04", label: "Алдаа дахин харах", title: "Алдаа дахин харах", text: "Алдаа бүрийг бич, сул талаа эзэмш, тогттол нь дахин дав.", href: "/sat/errors",   accent: "orange", bullets: ["Алдаа бичих", "Давтах горим", "Сул талаа эзэмших"] },
     ],
   },
 };
@@ -293,21 +301,6 @@ export default function SATOverviewPage() {
             <div className="quick-value">{t.bestOrderValue}</div>
             <p>{t.bestOrderText}</p>
           </div>
-
-          <a href="/sat/errors" className="quick-card error-stat-card">
-            <div className="quick-label">{t.errorsToday}</div>
-            {mounted ? (
-              <>
-                <div className="quick-value error-stat-value">{errorStats.today}</div>
-                <p>{errorStats.total > 0 ? `${errorStats.total} ${t.errorsTotal}` : t.errorsNone}</p>
-              </>
-            ) : (
-              <>
-                <div className="quick-value error-stat-value">—</div>
-                <p>{t.errorsNone}</p>
-              </>
-            )}
-          </a>
         </section>
 
         {/* ── SCORE TRACKER ────────────────────────────────────────────── */}
@@ -352,7 +345,7 @@ export default function SATOverviewPage() {
                 <p className="score-empty">{t.noScores}</p>
               ) : (
                 <>
-                  {/* Numbers */}
+                  {/* Numbers + trend */}
                   <div className="score-callout">
                     <span className="score-num score-current">{latestScore}</span>
                     <span className="score-sep">→</span>
@@ -363,6 +356,15 @@ export default function SATOverviewPage() {
                     {gap === 0 && (
                       <span className="score-badge score-badge-done">{t.goalReached} ✓</span>
                     )}
+                    {scores.length >= 2 && (() => {
+                      const delta = scores[0].score - scores[1].score;
+                      if (delta === 0) return null;
+                      return (
+                        <span className={`score-trend-badge ${delta > 0 ? "up" : "down"}`}>
+                          {delta > 0 ? "↑" : "↓"} {Math.abs(delta)}
+                        </span>
+                      );
+                    })()}
                   </div>
 
                   {/* Progress bar */}
@@ -377,23 +379,80 @@ export default function SATOverviewPage() {
                     </div>
                   </div>
 
-                  {/* History mini chart */}
-                  {scores.length > 1 && (
-                    <div className="score-history">
-                      <div className="score-history-label">{t.recentLabel}</div>
-                      <div className="score-history-bars">
-                        {[...scores].reverse().slice(-7).map((s, i) => {
-                          const h = Math.round(((s.score - 400) / 1200) * 100);
-                          return (
-                            <div key={i} className="score-bar-col">
-                              <div className="score-mini-bar" style={{ height: `${h}%` }} />
-                              <span className="score-mini-val">{s.score}</span>
-                            </div>
-                          );
-                        })}
+                  {/* Stats row */}
+                  {(() => {
+                    const avg = Math.round(scores.reduce((s, e) => s + e.score, 0) / scores.length);
+                    const best = Math.max(...scores.map(e => e.score));
+                    return (
+                      <div className="score-stats-row">
+                        <div className="score-stat">
+                          <span className="score-stat-val">{scores.length}</span>
+                          <span className="score-stat-lbl">{t.sessionsLabel}</span>
+                        </div>
+                        <div className="score-stat">
+                          <span className="score-stat-val">{avg}</span>
+                          <span className="score-stat-lbl">{t.avgLabel}</span>
+                        </div>
+                        <div className="score-stat">
+                          <span className="score-stat-val">{best}</span>
+                          <span className="score-stat-lbl">{t.bestLabel}</span>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
+
+                  {/* SVG line chart */}
+                  {scores.length >= 2 && (() => {
+                    const ordered = [...scores].reverse();
+                    const W = 300, H = 72;
+                    const PL = 6, PR = 40, PT = 14, PB = 4;
+                    const cW = W - PL - PR, cH = H - PT - PB;
+                    const toX = (i: number) => PL + (i / (ordered.length - 1)) * cW;
+                    const toY = (s: number) => PT + (1 - (s - 400) / 1200) * cH;
+                    const pts = ordered.map((e, i) => ({ x: toX(i), y: toY(e.score), score: e.score }));
+                    const pathD = pts.map((p, i) => `${i === 0 ? "M" : "L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+                    const areaD = `${pathD} L${pts[pts.length-1].x.toFixed(1)},${(H-PB).toFixed(1)} L${pts[0].x.toFixed(1)},${(H-PB).toFixed(1)} Z`;
+                    const tgtY = toY(target);
+                    const overallDelta = ordered[ordered.length-1].score - ordered[0].score;
+                    return (
+                      <div className="score-chart-wrap">
+                        <div className="score-chart-header">
+                          <span className="score-chart-label">{t.progressLabel}</span>
+                          {overallDelta !== 0 && (
+                            <span className={`score-chart-delta ${overallDelta > 0 ? "up" : "down"}`}>
+                              {overallDelta > 0 ? "+" : ""}{overallDelta} {lang === "mn" ? "нийт" : "overall"}
+                            </span>
+                          )}
+                        </div>
+                        <svg viewBox={`0 0 ${W} ${H}`} className="score-svg" preserveAspectRatio="none">
+                          <defs>
+                            <linearGradient id="scoreAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.3" />
+                              <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+                            </linearGradient>
+                          </defs>
+                          {/* target dashed line */}
+                          <line x1={PL} y1={tgtY} x2={W - PR + 4} y2={tgtY}
+                            stroke="#059669" strokeWidth="1.2" strokeDasharray="4,3" opacity="0.7" />
+                          <text x={W - PR + 8} y={tgtY + 3} fontSize="8" fontWeight="700" fill="#059669" opacity="0.85">{target}</text>
+                          {/* area fill */}
+                          <path d={areaD} fill="url(#scoreAreaGrad)" />
+                          {/* score line */}
+                          <path d={pathD} fill="none" stroke="#f59e0b" strokeWidth="2.5"
+                            strokeLinejoin="round" strokeLinecap="round" />
+                          {/* dots + score labels */}
+                          {pts.map((p, i) => (
+                            <g key={i}>
+                              <circle cx={p.x} cy={p.y} r="3.5" fill="#f59e0b" stroke="white" strokeWidth="1.5" />
+                              <text x={p.x} y={p.y - 7} textAnchor="middle" fontSize="7.5" fontWeight="700" fill="#b45309">
+                                {p.score}
+                              </text>
+                            </g>
+                          ))}
+                        </svg>
+                      </div>
+                    );
+                  })()}
                 </>
               )}
             </div>
@@ -438,6 +497,33 @@ export default function SATOverviewPage() {
             })}
           </div>
         </section>
+
+        {/* ── ERROR LOG ────────────────────────────────────────────────── */}
+        <a href="/sat/errors" className="error-log-banner">
+          <div className="error-log-left">
+            <div className="error-log-icon">
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="10" cy="10" r="8" />
+                <path d="M10 6v4M10 14h.01" />
+              </svg>
+            </div>
+            <div>
+              <div className="error-log-label">{t.errorsToday}</div>
+              <div className="error-log-title">{lang === "mn" ? "Алдаа дахин харах" : "Review Mistakes"}</div>
+              <div className="error-log-sub">
+                {mounted
+                  ? errorStats.total > 0
+                    ? `${errorStats.today} ${lang === "mn" ? "өнөөдөр" : "today"} · ${errorStats.total} ${t.errorsTotal}`
+                    : t.errorsNone
+                  : t.errorsNone}
+              </div>
+            </div>
+          </div>
+          <div className="error-log-right">
+            {mounted && <span className="error-log-count">{errorStats.today}</span>}
+            <ArrowRight />
+          </div>
+        </a>
       </main>
     </div>
   );
@@ -549,11 +635,17 @@ html { scroll-behavior: smooth; }
   max-width: 1120px;
   margin: 0 auto;
   padding: 42px 24px 80px;
+  display: flex;
+  flex-direction: column;
 }
+
+/* Score tracker rendered last — below the practice/prep areas */
+.score-section { order: 1; }
 
 /* ── Back button ── */
 .back-btn {
   display: inline-flex;
+  align-self: flex-start;
   align-items: center;
   gap: 6px;
   margin-bottom: 18px;
@@ -769,7 +861,7 @@ html.dark .back-btn:hover {
 .quick-grid {
   margin-top: 16px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
 }
 
@@ -1066,6 +1158,174 @@ html.dark .score-badge { background: rgba(245,158,11,0.15); color: #fbbf24; }
   letter-spacing: -0.02em;
 }
 
+/* ── Score trend badge ── */
+.score-trend-badge {
+  font-size: 11px;
+  font-weight: 760;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.score-trend-badge.up {
+  background: rgba(5,150,105,0.1);
+  color: #059669;
+}
+.score-trend-badge.down {
+  background: rgba(239,68,68,0.1);
+  color: #dc2626;
+}
+
+/* ── Score stats row ── */
+.score-stats-row {
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.score-stat {
+  flex: 1;
+  padding: 9px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border-right: 1px solid var(--border);
+}
+.score-stat:last-child { border-right: none; }
+.score-stat-val {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+.score-stat-lbl {
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+/* ── Score SVG chart ── */
+.score-chart-wrap { width: 100%; }
+.score-chart-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.score-chart-label {
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+.score-chart-delta {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+.score-chart-delta.up {
+  background: rgba(5,150,105,0.1);
+  color: #059669;
+}
+.score-chart-delta.down {
+  background: rgba(239,68,68,0.1);
+  color: #dc2626;
+}
+.score-svg {
+  width: 100%;
+  height: 72px;
+  overflow: visible;
+  display: block;
+}
+
+html.dark .score-trend-badge.up { background: rgba(5,150,105,0.15); }
+html.dark .score-trend-badge.down { background: rgba(239,68,68,0.15); }
+html.dark .score-chart-delta.up { background: rgba(5,150,105,0.15); }
+html.dark .score-chart-delta.down { background: rgba(239,68,68,0.15); }
+
+/* ── Error log banner ── */
+.error-log-banner {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(234,88,12,0.22);
+  background: rgba(255,237,213,0.55);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  cursor: pointer;
+}
+.error-log-banner:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(234,88,12,0.14);
+  background: rgba(255,237,213,0.75);
+}
+html.dark .error-log-banner {
+  border-color: rgba(234,88,12,0.25);
+  background: rgba(124,45,18,0.15);
+}
+html.dark .error-log-banner:hover {
+  background: rgba(124,45,18,0.22);
+}
+.error-log-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.error-log-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(234,88,12,0.12);
+  border: 1px solid rgba(234,88,12,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ea580c;
+  flex-shrink: 0;
+}
+.error-log-label {
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9a3412;
+}
+html.dark .error-log-label { color: #fb923c; }
+.error-log-title {
+  font-size: 17px;
+  font-weight: 780;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-top: 2px;
+}
+.error-log-sub {
+  font-size: 13px;
+  color: #c2410c;
+  margin-top: 2px;
+}
+html.dark .error-log-sub { color: rgba(251,146,60,0.8); }
+.error-log-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ea580c;
+  flex-shrink: 0;
+}
+.error-log-count {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  color: #ea580c;
+}
+
 /* ── Areas section ── */
 .areas-section {
   margin-top: 16px;
@@ -1241,8 +1501,14 @@ html.dark .score-badge { background: rgba(245,158,11,0.15); color: #fbbf24; }
 /* ── Responsive ── */
 @media (max-width: 1080px) {
   .hero { grid-template-columns: 1fr; }
-  .quick-grid { grid-template-columns: repeat(2, 1fr); }
+  .quick-grid { grid-template-columns: repeat(3, 1fr); }
   .score-body { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .quick-grid { grid-template-columns: repeat(2, 1fr); }
+  .error-log-banner { padding: 14px 16px; border-radius: 18px; }
+  .error-log-count { font-size: 20px; }
 }
 
 @media (max-width: 700px) {

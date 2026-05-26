@@ -4,6 +4,7 @@ import { useSite } from "@/app/context";
 
 const links = {
   bluebook: "https://bluebook.app.collegeboard.org/",
+  bluebooky: "https://bluebooky.com",
   questionBank: "https://satsuitequestionbank.collegeboard.org/",
   onePrep: "https://www.oneprep.xyz/",
   desmos: "https://youtu.be/e-O4nwVHQ-Y?si=CWeoJ6LrIQiq2Sto",
@@ -84,6 +85,7 @@ const T = {
     usefulLinksLabel: "Useful links",
     usefulLinks: [
       { label: "Bluebook mock tests", href: links.bluebook },
+      { label: "★ Bluebooky — real SAT past papers", href: links.bluebooky },
       { label: "College Board Question Bank", href: links.questionBank },
       { label: "OnePrep practice", href: links.onePrep },
       { label: "Desmos SAT Math", href: links.desmos },
@@ -111,6 +113,7 @@ const T = {
     usefulLinksLabel: "Хэрэгтэй линкүүд",
     usefulLinks: [
       { label: "Bluebook дадлагын шалгалт", href: links.bluebook },
+      { label: "★ Bluebooky — жинхэнэ SAT өнгөрсөн шалгалт", href: links.bluebooky },
       { label: "College Board Асуулт банк", href: links.questionBank },
       { label: "OnePrep дадлага", href: links.onePrep },
       { label: "Desmos SAT Математик", href: links.desmos },
