@@ -253,9 +253,7 @@ export default function FocusPage() {
   }
 
   return (
-    <main className="relative min-h-screen bg-[#F6F7FB] text-slate-950 antialiased dark:bg-zinc-950 dark:text-zinc-100">
-      <div aria-hidden className="pointer-events-none fixed inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.03)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:linear-gradient(to_bottom,black,transparent_82%)] dark:opacity-30" />
-      <div aria-hidden className={`pointer-events-none fixed -top-48 left-1/2 h-[420px] w-[640px] -translate-x-1/2 rounded-full blur-3xl transition-colors duration-700 ${mode==="focus"?"bg-[radial-gradient(circle,rgba(99,102,241,0.14),transparent_60%)]":"bg-[radial-gradient(circle,rgba(16,185,129,0.14),transparent_60%)]"}`} />
+    <main className="relative min-h-screen bg-white text-slate-950 antialiased dark:bg-zinc-950 dark:text-zinc-100">
 
       {/* TOPBAR */}
       <header className="sticky top-0 z-30 border-b border-zinc-200/70 bg-white/80 backdrop-blur-xl dark:border-zinc-800/70 dark:bg-zinc-950/80">

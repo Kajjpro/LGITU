@@ -159,11 +159,7 @@ export default function SATResourcesPage() {
     : { badge: "SAT Resources", total: `${totalResources} total`, title: "Start with resources that actually help.", sub: "A short, organized list. Use fewer resources deeply — don't collect more.", footer: "Use one resource well before adding another." };
 
   return (
-    <main className="min-h-screen bg-[#F6F7FB] text-slate-950 antialiased dark:bg-zinc-950 dark:text-zinc-100">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.03)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:linear-gradient(to_bottom,black,transparent_78%)] dark:opacity-30"
-      />
+    <main className="min-h-screen bg-white text-slate-950 antialiased dark:bg-zinc-950 dark:text-zinc-100">
 
       <div className="relative mx-auto max-w-3xl px-4 pb-20 pt-6 sm:px-6 sm:pt-10">
         <a href="/sat" className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-zinc-500 transition hover:border-zinc-300 hover:text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200">← SAT</a>

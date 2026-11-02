@@ -12,7 +12,7 @@ interface SiteCtx {
 }
 
 const Ctx = createContext<SiteCtx>({
-  dark: true,
+  dark: false,
   lang: "en",
   toggleDark: () => {},
   setLang: () => {},
@@ -21,7 +21,7 @@ const Ctx = createContext<SiteCtx>({
 export const useSite = () => useContext(Ctx);
 
 export function SiteProvider({ children }: { children: ReactNode }) {
-  const [dark, setDark] = useState(true);
+  const [dark, setDark] = useState(false);
   const [lang, setLang] = useState<Lang>("en");
 
   useEffect(() => {

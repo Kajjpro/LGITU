@@ -57,7 +57,7 @@ const Page = () => {
   }, [allbooks, activeCategory]);
 
   return (
-    <main className="min-h-screen bg-[#f6f7fb] text-slate-950 dark:bg-zinc-950 dark:text-zinc-100">
+    <main className="min-h-screen bg-white text-slate-950 dark:bg-zinc-950 dark:text-zinc-100">
 
       {/* ── IN-SITE READER MODAL ── */}
       {reader && (
@@ -117,7 +117,6 @@ const Page = () => {
 
         {/* Hero */}
         <div className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-8 lg:p-10">
-          <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-sky-100 blur-3xl dark:bg-sky-900/20" />
           <div className="relative">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-400">SAT Books</p>

@@ -1,68 +1,97 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SiteLogo from "./sitecomponents/logo";
 import { useSite } from "./context";
+
+// ─── ABOUT ME — edit these to change the profile section at the bottom ───────
+
+const ME = {
+  name: "Khaliun",
+  email: "kmbqueensky@gmail.com",
+  // Put your photo at /public/me.jpg (or change this path).
+  photo: "/me.jpg",
+};
 
 // ─── TRANSLATIONS ─────────────────────────────────────────────────────────────
 
 const T = {
   en: {
-    nav: ["Guides", "About", "Focus Room"],
+    nav: { guides: "Guides", about: "About", focus: "Focus Room", contact: "Contact" },
     hero: {
-      tag: "study together · go further",
-      h1a: "Together",
-      h1b: "to the top.",
-      sub: "SAT, IELTS, and HSK guides — no noise, no paywalls. Just what actually helps you get in.",
+      tag: "Free · No signup · No ads",
+      h1: "Together to the top.",
+      sub: "Clear, honest guides for the SAT, IELTS and HSK. Pick your exam and know exactly what to do first.",
       cta: "Pick a guide",
-      cta2: "About",
-      focus: "Focus Room",
+      focus: "Open Focus Room",
     },
     guides: {
-      label: "Pick one",
-      h: "Which exam?",
+      label: "Guides",
+      h: "Which exam are you preparing for?",
       items: [
-        { label: "College Admission", desc: "Digital SAT prep — resources, books, and step-by-step advice that actually makes sense." },
-        { label: "Study Abroad",      desc: "IELTS prep — what each section really tests and how to improve your band score." },
-        { label: "Chinese Proficiency", desc: "HSK prep — vocabulary, listening, and reading the way that actually sticks." },
+        { label: "College admission", desc: "Digital SAT prep: resources, books, a score tracker and step-by-step advice." },
+        { label: "Study abroad",      desc: "IELTS prep: what each section really tests and how to raise your band score." },
+        { label: "Chinese proficiency", desc: "HSK prep: vocabulary, listening and reading, the way that actually sticks." },
       ],
       open: "Open guide",
     },
     about: {
-      h: "Made for students\nwho want to get in.",
-      p: "Free study guides with no ads, no signups, no noise. Just the stuff that helps.",
-      vals: ["No account needed", "Based on real prep", "Clear and beginner-friendly"],
+      label: "About",
+      h: "Made for students who want to get in.",
+      p: "LGITU stands for “Let’s Go Into Top Universities”. Everything here is free and focused on what actually helps.",
+      vals: [
+        { t: "No account needed", d: "Open any guide and start right away." },
+        { t: "Based on real prep", d: "Written from real experience, not filler." },
+        { t: "Beginner-friendly",  d: "Plain language, one step at a time." },
+      ],
     },
-    footer: { tagline: "Let's Go Into Top Universities", copy: "Free · No signup" },
+    me: {
+      label: "Made by",
+      hi: "Hi, I’m",
+      role: "Creator of LGITU",
+      p: "I built LGITU so students like me have one clear place to start preparing. Have a question, an idea, or found a mistake? Write to me anytime.",
+      email: "Send me an email",
+    },
+    footer: { tagline: "Let’s Go Into Top Universities" },
   },
   mn: {
-    nav: ["Гарын авлага", "Тухай", "Фокус өрөө"],
+    nav: { guides: "Гарын авлага", about: "Тухай", focus: "Фокус өрөө", contact: "Холбоо барих" },
     hero: {
-      tag: "хамт суралц · хамт дэвш",
-      h1a: "Хамтдаа их",
-      h1b: "сургуульд ороё",
-      sub: "SAT, IELTS, HSK гарын авлага — дэмий зүйлгүй, төлбөргүй. Орохыг зорьж буй хүн бүрт.",
+      tag: "Үнэгүй · Бүртгэлгүй · Зар сурталчилгаагүй",
+      h1: "Хамтдаа оргилд.",
+      sub: "SAT, IELTS, HSK-д зориулсан ойлгомжтой гарын авлага. Шалгалтаа сонгоод юунаас эхлэхээ мэд.",
       cta: "Гарын авлага сонгох",
-      cta2: "Тухай",
-      focus: "Фокус өрөө",
+      focus: "Фокус өрөө нээх",
     },
     guides: {
-      label: "Нэгийг сонго",
-      h: "Аль шалгалт?",
+      label: "Гарын авлага",
+      h: "Ямар шалгалтад бэлдэж байна вэ?",
       items: [
-        { label: "Их сургуульд элсэлт", desc: "SAT бэлтгэл — эх сурвалж, ном, алхам алхмаар утга бүхий зөвлөгөө." },
-        { label: "Гадаадад суралцах",   desc: "IELTS бэлтгэл — хэсэг бүр юу шалгадаг, оноогоо хэрхэн нэмэгдүүлэх вэ." },
-        { label: "Хятад хэлний мэдлэг", desc: "HSK бэлтгэл — үгийн сан, сонсох, уншлагыг үнэхээр тогтдог аргаар." },
+        { label: "Их сургуульд элсэлт", desc: "SAT бэлтгэл: эх сурвалж, ном, оноо хянагч, алхам алхмаар зөвлөгөө." },
+        { label: "Гадаадад суралцах",   desc: "IELTS бэлтгэл: хэсэг бүр юу шалгадаг, оноогоо хэрхэн ахиулах вэ." },
+        { label: "Хятад хэлний мэдлэг", desc: "HSK бэлтгэл: үгийн сан, сонсгол, уншлагыг үр дүнтэй аргаар." },
       ],
       open: "Нээх",
     },
     about: {
-      h: "Орохыг зорьж буй\nоюутнуудад зориулсан.",
-      p: "Зар байхгүй, бүртгэл байхгүй, дэмий зүйлгүй. Зөвхөн хэрэгтэй зүйлс.",
-      vals: ["Бүртгэл шаардлагагүй", "Бодит туршлагад суурилсан", "Анхлан суралцагчдад"],
+      label: "Тухай",
+      h: "Шилдэг сургуульд орохыг зорьж буй сурагчдад.",
+      p: "LGITU гэдэг нь “Шилдэг их сургуулиудад орцгооё” гэсэн утгатай. Энд байгаа бүх зүйл үнэгүй бөгөөд үнэхээр хэрэгтэй зүйлд төвлөрсөн.",
+      vals: [
+        { t: "Бүртгэл шаардлагагүй", d: "Гарын авлагаа нээгээд шууд эхэл." },
+        { t: "Бодит туршлагад суурилсан", d: "Илүү дутуу зүйлгүй, бодит туршлагаас." },
+        { t: "Анхлан суралцагчдад", d: "Энгийн хэлээр, алхам алхмаар." },
+      ],
     },
-    footer: { tagline: "Шилдэг их сургуулиудад орцгооё", copy: "Үнэгүй · Бүртгэл шаардлагагүй" },
+    me: {
+      label: "Бүтээгч",
+      hi: "Сайн уу, би",
+      role: "LGITU-г бүтээгч",
+      p: "Над шиг сурагчдад бэлтгэлээ эхлэх нэг ойлгомжтой газар байгаасай гэж LGITU-г бүтээсэн. Асуулт, санаа байвал эсвэл алдаа олсон бол хүссэн үедээ надад бичээрэй.",
+      email: "Имэйл илгээх",
+    },
+    footer: { tagline: "Шилдэг их сургуулиудад орцгооё" },
   },
 };
 
@@ -70,56 +99,64 @@ const exams = [
   { exam: "SAT",   href: "/sat",   accent: "sat"   },
   { exam: "IELTS", href: "/ielts", accent: "ielts" },
   { exam: "HSK",   href: "/hsk",   accent: "hsk"   },
-];
+] as const;
 
 // ─── ICONS ────────────────────────────────────────────────────────────────────
 
+const svg = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.8,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+};
+
 function MenuIcon({ open }: { open: boolean }) {
   return (
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-      {open
-        ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
-        : <><line x1="3" y1="8" x2="21" y2="8"/><line x1="3" y1="16" x2="21" y2="16"/></>}
+    <svg viewBox="0 0 24 24" width="20" height="20" {...svg}>
+      {open ? <path d="M6 6l12 12M18 6 6 18" /> : <path d="M4 8h16M4 16h16" />}
     </svg>
   );
 }
 
 function SunIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-      <circle cx="12" cy="12" r="4"/>
-      <line x1="12" y1="2" x2="12" y2="5"/>
-      <line x1="12" y1="19" x2="12" y2="22"/>
-      <line x1="2" y1="12" x2="5" y2="12"/>
-      <line x1="19" y1="12" x2="22" y2="12"/>
-      <line x1="4.9" y1="4.9" x2="7.1" y2="7.1"/>
-      <line x1="16.9" y1="16.9" x2="19.1" y2="19.1"/>
-      <line x1="4.9" y1="19.1" x2="7.1" y2="16.9"/>
-      <line x1="16.9" y1="7.1" x2="19.1" y2="4.9"/>
+    <svg viewBox="0 0 24 24" width="16" height="16" {...svg}>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.2 2.2M16.9 16.9l2.2 2.2M4.9 19.1l2.2-2.2M16.9 7.1l2.2-2.2" />
     </svg>
   );
 }
 
 function MoonIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    <svg viewBox="0 0 24 24" width="16" height="16" {...svg}>
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   );
 }
 
 function ArrowRight() {
   return (
-    <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 10h12M11 5l5 5-5 5"/>
+    <svg viewBox="0 0 20 20" width="15" height="15" {...svg}>
+      <path d="M4 10h12M11 5l5 5-5 5" />
     </svg>
   );
 }
 
-function ArrowUpRight() {
+function CheckIcon() {
   return (
-    <svg viewBox="0 0 20 20" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 15 15 5M7 5h8v8"/>
+    <svg viewBox="0 0 20 20" width="14" height="14" {...svg} strokeWidth={2.2}>
+      <path d="M4.5 10.5l3.5 3.5 7.5-8" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="17" height="17" {...svg}>
+      <rect x="3" y="5" width="18" height="14" rx="2.5" />
+      <path d="m4 7 8 6 8-6" />
     </svg>
   );
 }
@@ -129,98 +166,93 @@ function ArrowUpRight() {
 export default function HomePage() {
   const { dark, lang, toggleDark, setLang } = useSite();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [photoOk, setPhotoOk] = useState(true);
+  const photoRef = useRef<HTMLImageElement>(null);
+  // The image may fail before React hydrates, so onError alone can miss it.
+  useEffect(() => {
+    const img = photoRef.current;
+    if (img && img.complete && img.naturalWidth === 0) setPhotoOk(false);
+  }, []);
   const c = T[lang];
+  const close = () => setMenuOpen(false);
 
   return (
     <div className="hp-root">
       <style>{css}</style>
 
-      <div className="hp-grid-bg" />
-      {dark && <><div className="hp-blob hp-b1" /><div className="hp-blob hp-b2" /></>}
-
       {/* TOPBAR */}
       <header className="hp-bar">
-        <SiteLogo />
+        <div className="hp-bar-inner">
+          <SiteLogo />
 
-        <nav className="hp-nav">
-          <a href="#guides">{c.nav[0]}</a>
-          <a href="#about">{c.nav[1]}</a>
-          <Link href="/focus" className="hp-nav-focus">{c.nav[2]}</Link>
-        </nav>
+          <nav className="hp-nav">
+            <a href="#guides">{c.nav.guides}</a>
+            <Link href="/focus">{c.nav.focus}</Link>
+            <a href="#about">{c.nav.about}</a>
+            <a href="#contact">{c.nav.contact}</a>
+          </nav>
 
-        <div className="hp-bar-right">
-          <div className="hp-lang">
-            <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
-            <span>/</span>
-            <button className={lang === "mn" ? "on" : ""} onClick={() => setLang("mn")}>МН</button>
+          <div className="hp-bar-right">
+            <div className="hp-lang" role="group" aria-label="Language">
+              <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
+              <button className={lang === "mn" ? "on" : ""} onClick={() => setLang("mn")}>МН</button>
+            </div>
+            <button className="hp-icon-btn" onClick={toggleDark} aria-label="Toggle theme">
+              {dark ? <SunIcon /> : <MoonIcon />}
+            </button>
+            <button className="hp-icon-btn hp-menu-btn" onClick={() => setMenuOpen(v => !v)} aria-label="Menu">
+              <MenuIcon open={menuOpen} />
+            </button>
           </div>
-          <button className="hp-icon-btn" onClick={toggleDark} aria-label="Toggle theme">
-            {dark ? <SunIcon /> : <MoonIcon />}
-          </button>
-          <button className="hp-icon-btn hp-menu-btn" onClick={() => setMenuOpen(v => !v)} aria-label="Menu">
-            <MenuIcon open={menuOpen} />
-          </button>
         </div>
       </header>
 
       {menuOpen && (
-        <div className="hp-overlay" onClick={() => setMenuOpen(false)}>
+        <div className="hp-overlay" onClick={close}>
           <nav className="hp-drawer" onClick={e => e.stopPropagation()}>
-            <a href="#guides" onClick={() => setMenuOpen(false)}>{c.nav[0]}</a>
-            <a href="#about"  onClick={() => setMenuOpen(false)}>{c.nav[1]}</a>
-            <Link href="/focus" onClick={() => setMenuOpen(false)}>{c.nav[2]}</Link>
+            <a href="#guides" onClick={close}>{c.nav.guides}</a>
+            <Link href="/focus" onClick={close}>{c.nav.focus}</Link>
+            <a href="#about" onClick={close}>{c.nav.about}</a>
+            <a href="#contact" onClick={close}>{c.nav.contact}</a>
             <div className="hp-sep" />
-            <Link href="/sat"   onClick={() => setMenuOpen(false)}><span className="hp-dot sat"/>SAT</Link>
-            <Link href="/ielts" onClick={() => setMenuOpen(false)}><span className="hp-dot ielts"/>IELTS</Link>
-            <Link href="/hsk"   onClick={() => setMenuOpen(false)}><span className="hp-dot hsk"/>HSK</Link>
+            {exams.map(e => (
+              <Link key={e.exam} href={e.href} onClick={close}>
+                <span className={`hp-dot ${e.accent}`} />{e.exam}
+              </Link>
+            ))}
           </nav>
         </div>
       )}
 
-      <main className="hp-main">
-
+      <main>
         {/* HERO */}
-        <section className="hp-hero">
-          <p className="hp-tag">— {c.hero.tag}</p>
-
-          <h1 className="hp-h1">
-            <span className="hp-ha">{c.hero.h1a}</span>
-            <span className="hp-hb">{c.hero.h1b}</span>
-          </h1>
-
+        <section className="hp-hero hp-wrap">
+          <p className="hp-tag">{c.hero.tag}</p>
+          <h1 className="hp-h1">{c.hero.h1}</h1>
           <p className="hp-sub">{c.hero.sub}</p>
-
           <div className="hp-btns">
-            <a href="#guides" className="hp-fill">{c.hero.cta} <ArrowRight /></a>
-            <Link href="/focus" className="hp-focus">{c.hero.focus} <ArrowUpRight /></Link>
-            <a href="#about"  className="hp-line">{c.hero.cta2}</a>
-          </div>
-
-          <div className="hp-chips">
-            {exams.map(e => (
-              <Link key={e.exam} href={e.href} className={`hp-chip ${e.accent}`}>{e.exam}</Link>
-            ))}
+            <a href="#guides" className="hp-btn hp-btn-primary">{c.hero.cta} <ArrowRight /></a>
+            <Link href="/focus" className="hp-btn hp-btn-ghost">{c.hero.focus}</Link>
           </div>
         </section>
 
         {/* GUIDES */}
-        <section id="guides" className="hp-section">
-          <p className="hp-slabel">{c.guides.label}</p>
-          <h2 className="hp-sh">{c.guides.h}</h2>
+        <section id="guides" className="hp-section hp-wrap">
+          <p className="hp-label">{c.guides.label}</p>
+          <h2 className="hp-h2">{c.guides.h}</h2>
 
-          <div className="hp-ggrid">
+          <div className="hp-grid">
             {exams.map((e, i) => {
               const item = c.guides.items[i];
               return (
-                <Link key={e.exam} href={e.href} className={`hp-gcard ${e.accent}`}>
-                  <div className="hp-gcard-head">
-                    <span className={`hp-gbadge ${e.accent}`}>{e.exam}</span>
-                    <span className="hp-garrow"><ArrowUpRight /></span>
+                <Link key={e.exam} href={e.href} className={`hp-card ${e.accent}`}>
+                  <div className="hp-card-top">
+                    <span className={`hp-dot ${e.accent}`} />
+                    <span className="hp-card-kicker">{item.label}</span>
                   </div>
-                  <div className="hp-gname">{e.exam}</div>
-                  <div className="hp-glabel">{item.label}</div>
-                  <p className="hp-gdesc">{item.desc}</p>
-                  <div className="hp-gfoot">{c.guides.open} <ArrowRight /></div>
+                  <h3 className="hp-card-title">{e.exam}</h3>
+                  <p className="hp-card-desc">{item.desc}</p>
+                  <span className="hp-card-link">{c.guides.open} <ArrowRight /></span>
                 </Link>
               );
             })}
@@ -228,33 +260,70 @@ export default function HomePage() {
         </section>
 
         {/* ABOUT */}
-        <section id="about" className="hp-section hp-about">
-          <div className="hp-about-text">
-            <h2 className="hp-about-h">
-              {c.about.h.split("\n").map((l, i) => <span key={i}>{l}{i === 0 && <br/>}</span>)}
-            </h2>
-            <p className="hp-about-p">{c.about.p}</p>
-          </div>
-          <div className="hp-vals">
-            {c.about.vals.map(v => <span key={v} className="hp-val">{v}</span>)}
+        <section id="about" className="hp-section hp-wrap">
+          <div className="hp-about">
+            <div>
+              <p className="hp-label">{c.about.label}</p>
+              <h2 className="hp-h2">{c.about.h}</h2>
+              <p className="hp-text">{c.about.p}</p>
+            </div>
+            <ul className="hp-vals">
+              {c.about.vals.map(v => (
+                <li key={v.t}>
+                  <span className="hp-check"><CheckIcon /></span>
+                  <div>
+                    <strong>{v.t}</strong>
+                    <span>{v.d}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
-        {/* FOOTER */}
-        <footer className="hp-footer">
-          <div>
-            <strong className="hp-fname">LGITU</strong>
-            <p className="hp-ftag">{c.footer.tagline}</p>
-            <p className="hp-fcopy">© {new Date().getFullYear()} · {c.footer.copy}</p>
-          </div>
-          <div className="hp-flinks">
-            <Link href="/sat">SAT</Link>
-            <Link href="/ielts">IELTS</Link>
-            <Link href="/hsk">HSK</Link>
-          </div>
-        </footer>
+        {/* ABOUT ME */}
+        <section id="contact" className="hp-section hp-wrap">
+          <div className="hp-me">
+            <div className="hp-photo">
+              <span className="hp-photo-fallback" aria-hidden="true">{ME.name.charAt(0)}</span>
+              {photoOk && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img ref={photoRef} src={ME.photo} alt={ME.name} onError={() => setPhotoOk(false)} />
+              )}
+            </div>
 
+            <div className="hp-me-body">
+              <p className="hp-label">{c.me.label}</p>
+              <h2 className="hp-me-name">
+                <span>{c.me.hi}</span> {ME.name}
+              </h2>
+              <p className="hp-me-role">{c.me.role}</p>
+              <p className="hp-text">{c.me.p}</p>
+
+              <div className="hp-me-contact">
+                <a href={`mailto:${ME.email}`} className="hp-btn hp-btn-primary">
+                  <MailIcon /> {c.me.email}
+                </a>
+                <a href={`mailto:${ME.email}`} className="hp-me-email">{ME.email}</a>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
+
+      {/* FOOTER */}
+      <footer className="hp-footer">
+        <div className="hp-wrap hp-footer-inner">
+          <div>
+            <strong>LGITU</strong>
+            <span>{c.footer.tagline} · © {new Date().getFullYear()}</span>
+          </div>
+          <nav>
+            {exams.map(e => <Link key={e.exam} href={e.href}>{e.exam}</Link>)}
+            <Link href="/focus">{c.nav.focus}</Link>
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }
@@ -262,330 +331,240 @@ export default function HomePage() {
 // ─── STYLES ───────────────────────────────────────────────────────────────────
 
 const css = `
-/* light default */
 .hp-root {
-  --bg:    #F7F6F2;
+  --bg:    #FFFFFF;
   --sf:    #FFFFFF;
-  --sf2:   #EFEDE8;
-  --bd:    rgba(0,0,0,0.08);
-  --bd2:   rgba(0,0,0,0.15);
-  --tx:    #18161F;
-  --mu:    rgba(24,22,31,0.52);
-  --mu2:   rgba(24,22,31,0.32);
-  --sat:   #4F46E5; --satd: rgba(79,70,229,0.09);  --satg: rgba(79,70,229,0.18);
-  --ielts: #0E7490; --ielsd: rgba(14,116,144,0.09); --ielsg: rgba(14,116,144,0.18);
-  --hsk:   #C2410C; --hskd: rgba(194,65,12,0.09);  --hskg: rgba(194,65,12,0.18);
+  --sf2:   #F6F6F8;
+  --bd:    #ECECF0;
+  --bd2:   #D9D9E0;
+  --tx:    #111118;
+  --mu:    #5B5B66;
+  --mu2:   #8E8E99;
+  --acc:   #4F46E5;
+  --sat:   #4F46E5;
+  --ielts: #0E7490;
+  --hsk:   #C2410C;
 
   min-height: 100vh;
   background: var(--bg);
   color: var(--tx);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  position: relative;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   overflow-x: hidden;
 }
-
-/* dark override via html.dark ancestor */
 html.dark .hp-root {
-  --bg:    #0E0D11;
-  --sf:    #161520;
-  --sf2:   #1E1D29;
-  --bd:    rgba(255,255,255,0.07);
-  --bd2:   rgba(255,255,255,0.14);
-  --tx:    #EEEDF4;
-  --mu:    rgba(238,237,244,0.50);
-  --mu2:   rgba(238,237,244,0.28);
-  --sat:   #818CF8; --satd: rgba(129,140,248,0.12); --satg: rgba(129,140,248,0.22);
-  --ielts: #2DD4BF; --ielsd: rgba(45,212,191,0.12); --ielsg: rgba(45,212,191,0.22);
-  --hsk:   #FB923C; --hskd: rgba(251,146,60,0.12);  --hskg: rgba(251,146,60,0.22);
+  --bg:    #0E0E12;
+  --sf:    #16161C;
+  --sf2:   #1D1D24;
+  --bd:    #26262E;
+  --bd2:   #34343E;
+  --tx:    #F2F2F5;
+  --mu:    #A5A5B0;
+  --mu2:   #74747F;
+  --acc:   #818CF8;
+  --sat:   #818CF8;
+  --ielts: #2DD4BF;
+  --hsk:   #FB923C;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
+.hp-root *, .hp-root *::before, .hp-root *::after { box-sizing: border-box; }
+:where(.hp-root) :where(h1, h2, h3, p, ul) { margin: 0; padding: 0; }
+.hp-root section[id] { scroll-margin-top: 72px; }
 
-.hp-grid-bg {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background-image: radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px);
-  background-size: 28px 28px;
-  mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 65%);
-}
-html.dark .hp-grid-bg {
-  background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
-}
+.hp-wrap { max-width: 1080px; margin: 0 auto; padding-left: 24px; padding-right: 24px; }
 
-.hp-blob { position: fixed; border-radius: 50%; filter: blur(130px); pointer-events: none; z-index: 0; opacity: 0.07; }
-.hp-b1 { width: 600px; height: 600px; top: -200px; left: -150px; background: #818CF8; }
-.hp-b2 { width: 500px; height: 500px; bottom: -180px; right: -120px; background: #FB923C; }
-
-/* logo dark/light */
-html.dark .hp-root .logo-name  { color: var(--tx); }
-html.dark .hp-root .logo-tagline { color: var(--mu2); }
-html.dark .hp-root .site-logo:hover .logo-name { color: var(--sat); }
-.hp-root .logo-name  { color: var(--tx); }
+/* logo */
+.hp-root .logo-name    { color: var(--tx); }
 .hp-root .logo-tagline { color: var(--mu2); }
-.hp-root .site-logo:hover .logo-name { color: var(--sat); }
-.hp-root .logo-mark, .hp-root .logo-name { transition: transform .18s, color .18s, box-shadow .18s; }
+.hp-root .site-logo:hover .logo-name { color: var(--acc); }
 
-/* topbar */
+/* ── topbar ── */
 .hp-bar {
   position: sticky; top: 0; z-index: 20;
-  height: 60px; padding: 0 28px;
-  display: flex; align-items: center; justify-content: space-between;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: saturate(180%) blur(16px);
   border-bottom: 1px solid var(--bd);
-  background: rgba(247,246,242,0.9);
-  backdrop-filter: blur(20px);
-  transition: background .3s;
 }
-html.dark .hp-bar { background: rgba(14,13,17,0.9); }
-
-.hp-nav { display: flex; gap: 22px; }
-.hp-nav a { color: var(--mu); text-decoration: none; font-size: 14px; font-weight: 500; transition: color .18s; }
+.hp-bar-inner {
+  max-width: 1080px; margin: 0 auto; padding: 0 24px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.hp-nav { display: flex; gap: 28px; }
+.hp-nav a { color: var(--mu); text-decoration: none; font-size: 14px; font-weight: 500; transition: color .15s; }
 .hp-nav a:hover { color: var(--tx); }
 
 .hp-bar-right { display: flex; align-items: center; gap: 8px; }
-
 .hp-lang {
-  display: flex; align-items: center; gap: 3px;
-  padding: 4px 6px; border-radius: 8px;
-  border: 1px solid var(--bd); background: var(--sf);
+  display: flex; padding: 3px; gap: 2px; border-radius: 10px;
+  background: var(--sf2);
 }
-.hp-lang span { color: var(--mu2); font-size: 12px; }
 .hp-lang button {
-  background: none; border: none; cursor: pointer;
-  color: var(--mu); font-size: 12px; font-weight: 700;
-  padding: 2px 5px; border-radius: 5px;
-  transition: color .15s, background .15s;
+  border: 0; background: none; cursor: pointer;
+  color: var(--mu2); font: inherit; font-size: 12px; font-weight: 600;
+  padding: 5px 9px; border-radius: 7px; transition: color .15s, background .15s;
 }
-.hp-lang button.on { color: var(--tx); background: var(--sf2); }
+.hp-lang button.on { color: var(--tx); background: var(--sf); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
 .hp-lang button:not(.on):hover { color: var(--tx); }
 
 .hp-icon-btn {
-  width: 34px; height: 34px; border-radius: 9px;
+  width: 36px; height: 36px; border-radius: 10px;
   border: 1px solid var(--bd); background: var(--sf);
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; color: var(--mu);
-  transition: color .18s, border-color .18s;
+  cursor: pointer; color: var(--mu); transition: color .15s, border-color .15s;
 }
 .hp-icon-btn:hover { color: var(--tx); border-color: var(--bd2); }
 .hp-menu-btn { display: none; }
 
 /* drawer */
-.hp-overlay {
-  position: fixed; inset: 0; z-index: 19;
-  background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
-  animation: hpFade .18s ease;
-}
+.hp-overlay { position: fixed; inset: 0; z-index: 19; background: rgba(0,0,0,.25); animation: hpFade .15s ease; }
 .hp-drawer {
-  position: absolute; top: 60px; left: 0; right: 0;
-  background: var(--sf); border-bottom: 1px solid var(--bd);
-  padding: 12px 14px; display: flex; flex-direction: column; gap: 2px;
-  animation: hpSlide .2s ease;
+  position: absolute; top: 64px; left: 0; right: 0;
+  background: var(--bg); border-bottom: 1px solid var(--bd);
+  padding: 10px 16px 16px; display: flex; flex-direction: column;
 }
 .hp-drawer > a {
-  text-decoration: none; color: var(--tx);
-  font-size: 17px; font-weight: 700; letter-spacing: -0.02em;
-  padding: 10px 12px; border-radius: 11px;
-  transition: background .14s;
   display: flex; align-items: center; gap: 10px;
+  padding: 12px 8px; color: var(--tx); text-decoration: none;
+  font-size: 16px; font-weight: 600; border-radius: 10px;
 }
 .hp-drawer > a:hover { background: var(--sf2); }
-.hp-sep { height: 1px; background: var(--bd); margin: 6px 0; }
+.hp-sep { height: 1px; background: var(--bd); margin: 8px 0; }
+@keyframes hpFade { from { opacity: 0 } to { opacity: 1 } }
+
 .hp-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .hp-dot.sat   { background: var(--sat); }
 .hp-dot.ielts { background: var(--ielts); }
 .hp-dot.hsk   { background: var(--hsk); }
-@keyframes hpFade  { from{opacity:0} to{opacity:1} }
-@keyframes hpSlide { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
 
-/* main */
-.hp-main {
-  position: relative; z-index: 1;
-  max-width: 1140px; margin: 0 auto;
-  padding: 0 28px 48px;
+/* ── buttons ── */
+.hp-btn {
+  height: 46px; padding: 0 20px; border-radius: 12px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 15px; font-weight: 600; text-decoration: none;
+  transition: background .15s, border-color .15s, color .15s, transform .15s;
 }
+.hp-btn-primary { background: var(--tx); color: var(--bg); }
+.hp-btn-primary:hover { transform: translateY(-1px); opacity: .9; }
+.hp-btn-ghost { border: 1px solid var(--bd2); color: var(--tx); background: var(--sf); }
+.hp-btn-ghost:hover { border-color: var(--mu2); }
 
-/* hero */
-.hp-hero { padding: 80px 0 68px; text-align: center; display: flex; flex-direction: column; align-items: center; }
-.hp-tag  { font-size: 13px; color: var(--mu2); font-weight: 500; letter-spacing: 0.01em; margin-bottom: 22px; }
-.hp-h1   { display: flex; flex-direction: column; gap: 4px; margin-bottom: 22px; }
-.hp-ha   {
-  font-size: clamp(36px, 4.4vw, 58px);
-  font-weight: 700; letter-spacing: -0.01em; line-height: 1.02; color: var(--mu);
+/* ── hero ── */
+.hp-hero { padding-top: 112px; padding-bottom: 96px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.hp-tag {
+  display: inline-block; padding: 6px 14px; border-radius: 999px;
+  background: var(--sf2); color: var(--mu);
+  font-size: 13px; font-weight: 500; margin-bottom: 28px;
 }
-.hp-hb   {
-  font-size: clamp(50px, 6.4vw, 86px);
-  font-weight: 900; letter-spacing: -0.018em; line-height: 0.98; color: var(--tx);
+.hp-h1 {
+  font-size: clamp(42px, 7vw, 76px); font-weight: 800;
+  letter-spacing: -0.035em; line-height: 1.02; color: var(--tx);
   text-wrap: balance;
 }
-.hp-sub  { max-width: 480px; color: var(--mu); font-size: 16px; line-height: 1.75; margin-bottom: 32px; }
+.hp-sub { max-width: 540px; margin-top: 22px; color: var(--mu); font-size: 18px; line-height: 1.6; text-wrap: pretty; }
+.hp-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 36px; }
 
-.hp-btns { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 44px; }
-.hp-fill {
-  height: 44px; padding: 0 18px; border-radius: 999px;
-  background: var(--tx); color: var(--bg);
-  font-size: 14px; font-weight: 700; text-decoration: none;
-  display: inline-flex; align-items: center; gap: 8px;
-  transition: opacity .18s, transform .18s;
+/* ── sections ── */
+.hp-section { padding-top: 88px; padding-bottom: 88px; border-top: 1px solid var(--bd); }
+.hp-label { font-size: 13px; font-weight: 600; color: var(--acc); margin-bottom: 10px; }
+.hp-h2 {
+  font-size: clamp(28px, 3.4vw, 40px); font-weight: 750;
+  letter-spacing: -0.03em; line-height: 1.12; color: var(--tx);
+  text-wrap: balance;
 }
-.hp-fill:hover { opacity: 0.82; transform: translateY(-1px); }
-.hp-line {
-  height: 44px; padding: 0 18px; border-radius: 999px;
-  background: transparent; border: 1px solid var(--bd2);
-  color: var(--mu); font-size: 14px; font-weight: 600; text-decoration: none;
-  display: inline-flex; align-items: center;
-  transition: border-color .18s, color .18s, transform .18s;
-}
-.hp-line:hover { border-color: var(--bd2); color: var(--tx); transform: translateY(-1px); }
-.hp-focus {
-  height: 44px; padding: 0 18px; border-radius: 999px;
-  background: linear-gradient(135deg, #7C3AED, #4F46E5);
-  color: #fff; font-size: 14px; font-weight: 700; text-decoration: none;
-  display: inline-flex; align-items: center; gap: 7px;
-  box-shadow: 0 10px 26px rgba(124,58,237,0.30);
-  transition: transform .18s, box-shadow .18s, filter .18s;
-}
-.hp-focus:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 14px 32px rgba(124,58,237,0.38); }
-.hp-nav-focus {
-  color: #7C3AED !important; font-weight: 700 !important;
-}
-html.dark .hp-nav-focus { color: #A78BFA !important; }
-
-.hp-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
-.hp-chip  {
-  padding: 9px 22px; border-radius: 999px;
-  font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
-  text-decoration: none; border: 1px solid transparent;
-  font-feature-settings: "ss01";
-  transition: transform .18s, filter .18s, box-shadow .18s;
-}
-.hp-chip.sat   { background: var(--satd);  color: var(--sat);   border-color: var(--satg);  }
-.hp-chip.ielts { background: var(--ielsd); color: var(--ielts); border-color: var(--ielsg); }
-.hp-chip.hsk   { background: var(--hskd);  color: var(--hsk);   border-color: var(--hskg);  }
-.hp-chip:hover { transform: translateY(-2px); filter: brightness(1.06); }
-
-/* section */
-.hp-section { padding: 64px 0; }
-.hp-slabel  {
-  font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--mu2); margin-bottom: 8px;
-}
-.hp-sh {
-  font-size: clamp(26px, 2.8vw, 38px);
-  font-weight: 900; letter-spacing: -0.06em; line-height: 1.04;
-  color: var(--tx); margin-bottom: 32px;
-}
+.hp-text { margin-top: 16px; color: var(--mu); font-size: 16px; line-height: 1.7; max-width: 520px; }
 
 /* guide cards */
-.hp-ggrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
-.hp-gcard {
-  display: block; text-decoration: none;
-  border-radius: 22px; background: var(--sf); border: 1px solid var(--bd);
-  overflow: hidden; position: relative;
-  transition: transform .22s, border-color .22s, box-shadow .22s;
+.hp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+.hp-card {
+  display: flex; flex-direction: column;
+  padding: 28px; border-radius: 18px;
+  background: var(--sf); border: 1px solid var(--bd);
+  text-decoration: none; color: inherit;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
 }
-.hp-gcard::after {
-  content:""; position: absolute; left: 20px; right: 20px; top: 0;
-  height: 2px; border-radius: 0 0 4px 4px; opacity: 0.7;
-  transition: opacity .22s;
-}
-.hp-gcard.sat::after   { background: var(--sat); }
-.hp-gcard.ielts::after { background: var(--ielts); }
-.hp-gcard.hsk::after   { background: var(--hsk); }
-.hp-gcard:hover { transform: translateY(-6px); }
-.hp-gcard:hover::after { opacity: 1; }
-.hp-gcard.sat:hover   { border-color: color-mix(in srgb, var(--sat)   40%, transparent); box-shadow: 0 22px 56px var(--satg); }
-.hp-gcard.ielts:hover { border-color: color-mix(in srgb, var(--ielts) 40%, transparent); box-shadow: 0 22px 56px var(--ielsg); }
-.hp-gcard.hsk:hover   { border-color: color-mix(in srgb, var(--hsk)   40%, transparent); box-shadow: 0 22px 56px var(--hskg); }
-
-.hp-gcard-head {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 20px 20px 0;
-}
-.hp-gbadge {
-  font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
-  text-transform: uppercase; padding: 4px 10px; border-radius: 999px;
-}
-.hp-gbadge.sat   { background: var(--satd);  color: var(--sat); }
-.hp-gbadge.ielts { background: var(--ielsd); color: var(--ielts); }
-.hp-gbadge.hsk   { background: var(--hskd);  color: var(--hsk); }
-.hp-garrow {
-  width: 30px; height: 30px; border-radius: 9px;
-  border: 1px solid var(--bd); background: var(--sf2);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--mu); transition: transform .2s, color .2s;
-}
-.hp-gcard:hover .hp-garrow { transform: translate(3px,-3px); color: var(--tx); }
-
-.hp-gname   { padding: 14px 20px 0; font-size: 42px; font-weight: 800; letter-spacing: 0.02em; line-height: 1; color: var(--tx); }
-.hp-gcard.sat   .hp-gname { color: var(--sat); }
-.hp-gcard.ielts .hp-gname { color: var(--ielts); }
-.hp-gcard.hsk   .hp-gname { color: var(--hsk); }
-.hp-glabel  { padding: 7px 20px 0; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--mu2); }
-.hp-gdesc   { padding: 14px 20px 0; color: var(--mu); font-size: 14px; line-height: 1.68; }
-.hp-gfoot   { padding: 18px 20px 20px; display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: var(--tx); }
-.hp-gfoot svg { transition: transform .18s; }
-.hp-gcard:hover .hp-gfoot svg { transform: translateX(4px); }
+.hp-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(17,17,24,.07); }
+.hp-card.sat:hover   { border-color: color-mix(in srgb, var(--sat) 45%, var(--bd)); }
+.hp-card.ielts:hover { border-color: color-mix(in srgb, var(--ielts) 45%, var(--bd)); }
+.hp-card.hsk:hover   { border-color: color-mix(in srgb, var(--hsk) 45%, var(--bd)); }
+.hp-card-top { display: flex; align-items: center; gap: 8px; }
+.hp-card-kicker { font-size: 13px; font-weight: 500; color: var(--mu2); }
+.hp-card-title { margin-top: 18px; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: var(--tx); }
+.hp-card-desc { margin-top: 10px; flex: 1; color: var(--mu); font-size: 15px; line-height: 1.6; }
+.hp-card-link { margin-top: 24px; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--tx); }
+.hp-card.sat   .hp-card-link { color: var(--sat); }
+.hp-card.ielts .hp-card-link { color: var(--ielts); }
+.hp-card.hsk   .hp-card-link { color: var(--hsk); }
+.hp-card-link svg { transition: transform .2s; }
+.hp-card:hover .hp-card-link svg { transform: translateX(3px); }
 
 /* about */
-.hp-about {
-  display: flex; align-items: flex-start;
-  justify-content: space-between; gap: 48px;
-  padding-top: 56px; padding-bottom: 56px;
-  border-top: 1px solid var(--bd);
+.hp-about { display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: start; }
+.hp-vals { list-style: none; display: flex; flex-direction: column; gap: 24px; padding-top: 6px; }
+.hp-vals li { display: flex; gap: 14px; align-items: flex-start; }
+.hp-check {
+  width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--acc) 12%, transparent); color: var(--acc);
 }
-.hp-about-text { max-width: 460px; }
-.hp-about-h {
-  font-size: clamp(26px, 3vw, 38px);
-  font-weight: 900; letter-spacing: -0.065em; line-height: 1.05;
-  color: var(--tx); margin-bottom: 16px;
-  white-space: pre-line;
+.hp-vals li > div > strong { display: block; font-size: 16px; font-weight: 650; color: var(--tx); }
+.hp-vals li > div > span { display: block; margin-top: 3px; font-size: 15px; color: var(--mu); line-height: 1.55; }
+
+/* about me */
+.hp-me { display: grid; grid-template-columns: minmax(0, 440px) 1fr; gap: 64px; align-items: center; }
+.hp-photo {
+  position: relative; width: 100%; aspect-ratio: 4 / 5;
+  border-radius: 24px; overflow: hidden;
+  background: var(--sf2); border: 1px solid var(--bd);
 }
-.hp-about-p { color: var(--mu); font-size: 15px; line-height: 1.78; }
-.hp-vals    { display: flex; flex-direction: column; gap: 8px; padding-top: 6px; }
-.hp-val     {
-  padding: 12px 18px; border-radius: 12px;
-  border: 1px solid var(--bd); background: var(--sf);
-  font-size: 14px; font-weight: 600; color: var(--mu);
-  transition: border-color .2s, color .2s;
+.hp-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.hp-photo-fallback {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 120px; font-weight: 800; color: var(--bd2); letter-spacing: -0.04em;
 }
-.hp-val:hover { border-color: var(--bd2); color: var(--tx); }
+.hp-me-name {
+  font-size: clamp(36px, 5vw, 56px); font-weight: 800;
+  letter-spacing: -0.035em; line-height: 1.05; color: var(--tx);
+}
+.hp-me-name span { color: var(--mu2); font-weight: 700; }
+.hp-me-role { margin-top: 10px; font-size: 17px; font-weight: 500; color: var(--mu); }
+.hp-me-contact { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.hp-me-email {
+  color: var(--tx); font-size: 15px; font-weight: 500; text-decoration: none;
+  border-bottom: 1px solid var(--bd2); padding-bottom: 2px; transition: border-color .15s;
+  word-break: break-all;
+}
+.hp-me-email:hover { border-color: var(--tx); }
 
 /* footer */
-.hp-footer {
-  border-top: 1px solid var(--bd);
-  padding: 30px 0 22px;
-  display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
+.hp-footer { border-top: 1px solid var(--bd); }
+.hp-footer-inner {
+  padding-top: 28px; padding-bottom: 28px;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
 }
-.hp-fname { display: block; font-size: 15px; font-weight: 900; letter-spacing: -0.04em; color: var(--tx); margin-bottom: 6px; }
-.hp-ftag  { font-size: 13px; color: var(--mu); }
-.hp-fcopy { margin-top: 7px; font-size: 12px; color: var(--mu2); }
-.hp-flinks { display: flex; gap: 8px; align-items: center; }
-.hp-flinks a {
-  padding: 7px 14px; border-radius: 999px;
-  background: var(--sf); border: 1px solid var(--bd);
-  color: var(--mu); text-decoration: none;
-  font-size: 13px; font-weight: 700;
-  transition: color .16s, border-color .16s;
-}
-.hp-flinks a:hover { color: var(--tx); border-color: var(--bd2); }
+.hp-footer strong { font-size: 14px; font-weight: 800; color: var(--tx); margin-right: 10px; }
+.hp-footer span { font-size: 13px; color: var(--mu2); }
+.hp-footer nav { display: flex; gap: 20px; }
+.hp-footer nav a { font-size: 13px; font-weight: 500; color: var(--mu); text-decoration: none; }
+.hp-footer nav a:hover { color: var(--tx); }
 
-/* responsive */
-@media (max-width: 1060px) {
-  .hp-ggrid { grid-template-columns: repeat(2,1fr); }
-  .hp-about { flex-direction: column; gap: 28px; }
+/* ── responsive ── */
+@media (max-width: 900px) {
+  .hp-grid { grid-template-columns: 1fr; }
+  .hp-about { grid-template-columns: 1fr; gap: 36px; }
+  .hp-me { grid-template-columns: 1fr; gap: 36px; }
+  .hp-photo { max-width: 440px; }
 }
 @media (max-width: 720px) {
-  .hp-bar { padding: 0 18px; }
+  .hp-wrap, .hp-bar-inner { padding-left: 16px; padding-right: 16px; }
   .hp-nav { display: none; }
   .hp-menu-btn { display: flex; }
-  .hp-main { padding: 0 16px 32px; }
-  .hp-hero { padding: 56px 0 48px; }
-  .hp-ggrid { grid-template-columns: 1fr; }
-  .hp-footer { flex-direction: column; gap: 20px; }
+  .hp-hero { padding-top: 72px; padding-bottom: 64px; }
+  .hp-sub { font-size: 16px; }
+  .hp-section { padding-top: 64px; padding-bottom: 64px; }
+  .hp-card { padding: 22px; }
 }
 @media (max-width: 460px) {
-  .hp-ha { font-size: 38px; }
-  .hp-hb { font-size: 54px; }
-  .hp-btns { flex-direction: column; align-items: center; }
-  .hp-fill, .hp-line { width: 100%; justify-content: center; }
+  .hp-btns { flex-direction: column; width: 100%; }
+  .hp-btns .hp-btn { width: 100%; }
 }
 `;

@@ -189,15 +189,7 @@ export default function SatSidebarLayout({ children }: { children: ReactNode }) 
   const [open, setOpen] = useState(false);
 
   return (
-    <main className="min-h-screen bg-[#F7F7F8] text-zinc-950 dark:bg-zinc-950 dark:text-zinc-100">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(to_right,rgba(9,9,11,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(9,9,11,0.045)_1px,transparent_1px)] bg-[size:44px_44px] [mask-image:radial-gradient(ellipse_at_50%_0%,black_0%,transparent_60%)]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed -top-64 left-1/2 -z-10 h-[520px] w-[720px] -translate-x-[30%] rounded-full bg-[radial-gradient(circle,rgba(79,70,229,0.10),transparent_60%)] blur-2xl"
-      />
+    <main className="min-h-screen bg-white text-zinc-950 dark:bg-zinc-950 dark:text-zinc-100">
 
       {/* MOBILE TOPBAR */}
       <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/90 backdrop-blur-xl lg:hidden dark:border-zinc-800 dark:bg-zinc-950/90">

@@ -232,7 +232,7 @@ export default function SATOverviewPage() {
   return (
     <div className="sat-page">
       <style>{css}</style>
-      <div className="page-bg" />
+
 
       <main className="sat-shell">
         <a href="/" className="back-btn">← Home</a>
@@ -533,7 +533,7 @@ export default function SATOverviewPage() {
 
 const css = `
 :root {
-  --bg:      #F6F7FB;
+  --bg:      #FFFFFF;
   --text:    #17171C;
   --muted:   #6F7280;
   --muted-2: #9CA0AE;
@@ -611,7 +611,6 @@ html { scroll-behavior: smooth; }
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at 10% 0%, rgba(79,70,229,0.06), transparent 30%),
     var(--bg);
   color: var(--text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
